@@ -140,11 +140,11 @@ class Ball {
 
   collide(){
 
-    this.distance=getDistance(this.brickX+this.brickX,this.brickY+this.brickY,this.px,this.py)
-    if(this.distance<50){
-      console.log('hhahahaha')
+    // this.distance=getDistance(this.brickX+this.brickX,this.brickY+this.brickY,this.px,this.py)
+    // if(this.distance<50){
+    //   console.log('hhahahaha')
 
-    }
+    // }
     function clamp(val, min, max) {
       return Math.max(min, Math.min(max, val))
     }
@@ -160,8 +160,10 @@ class Ball {
     
     // If the distance is less than the circle's radius, an intersection occurs
     var distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
-    if( distanceSquared < (circle.Radius * circle.Radius)){
+    if( distanceSquared < (this.r *this.r)){
       console.log("collided")
+      // this.dx=-1;
+      
     };
       // console.log(this.distance)
 
