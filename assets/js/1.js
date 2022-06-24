@@ -1,4 +1,4 @@
-import Brick from "./bricks.js"; //bujam yo ni 
+import Brick from "./bricks.js"; 
 
 const tileMap = new Brick();
 

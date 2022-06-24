@@ -12,7 +12,9 @@ body{
     width: 455px;
     margin: auto;
 }
-
+/* canvas{
+    background-color: rgb(122, 25, 25);
+} */
 *::after{
     content:"";
     display: table;

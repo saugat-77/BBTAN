@@ -105,10 +105,10 @@ class Ball {
         //no reason but 4 choti tala thokincha
         isMoving = false;
         this.ballCount += 1;
+        this.slope();
         document.addEventListener("click", () => {
           isMoving = true;
           // console.log("PX",this.px, this.py);
-          this.slope();
         });
 
         // console.log(this.ballCount);
