@@ -1,4 +1,3 @@
-
 function rand(max,min){
     return Math.floor(Math.random()*(max-min)+min)
   }
@@ -9,7 +8,6 @@ function getAngleDeg(ax,ay,bx,by) {
   
   return(angleDeg);
 }
-
 function getDistance(xA, yA, xB, yB) { 
 	var xDiff = xA - xB; 
 	var yDiff = yA - yB;
@@ -17,3 +15,4 @@ function getDistance(xA, yA, xB, yB) {
 	return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 }
 
+// console.log()

@@ -1,6 +1,6 @@
 class Ball {
   constructor(
-    r,
+    r=10,
     ctx,
     px = containerWidth,
     py = containerHeight,
@@ -49,6 +49,7 @@ class Ball {
     );
 
     this.ctx.strokeStyle = "black";
+    
     this.ctx.stroke();
   }
 
@@ -62,6 +63,8 @@ class Ball {
     this.py += this.speedY * this.dy;
     this.ctx.arc(this.px, this.py, this.r, 0, Math.PI * 2, false);
     this.ctx.stroke();
+    // this.collide()
+
   }
 
   currentPosition() {
@@ -130,6 +133,7 @@ class Ball {
     this.angX = getAngleDeg(this.px, this.py, this.curX, this.curY);
     this.dx = Math.cos(this.angX);
     this.dy = Math.sin(this.angX);
+    
     // console.log(angX)
   }
 
@@ -137,14 +141,14 @@ class Ball {
     let y = [1, 2, 3, 4, 5, 6];
     // console.log(x[rand(1,6)])
 
-    // for (let j=0;j<7;j++){}
-    // this.ctx.beginPath()
+    for (let j=0;j<7;j++){}
+    this.ctx.beginPath()
 
-    // for (let i=0;i<1;i++){
-    //   this.brickX = i * this.brickSize
-    //   this.ctx.strokeRect(this.brickX,this.brickY,this.brickSize,this.brickSize)
-    //   // this.collide()
-    // }
+    for (let i=0;i<1;i++){
+      this.brickX = i * this.brickSize
+      this.ctx.strokeRect(this.brickX,this.brickY,this.brickSize,this.brickSize)
+      // this.collide()
+    }
   }
 
   collide() {
@@ -165,7 +169,7 @@ class Ball {
     let distanceSquared = distanceX * distanceX + distanceY * distanceY;
     if (distanceSquared < this.r * this.r) {
       console.log("collided");
-      console.log("px", this.px, this.py);
+      // console.log("px", this.px, this.py);
     }
   }
 }
@@ -175,10 +179,10 @@ ball1.createBall();
 
 setInterval(() => {
   if (isMoving == true) {
-    ball1.fallBricks();
+    // ball1.fallBricks();
     ball1.moveBall();
-    ball1.boundaryCheck();
-    ball1.currentPosition();
-    ball1.mousePointer();
+    // ball1.boundaryCheck();
+    // ball1.currentPosition();
+    // ball1.mousePointer();
   }
 }, 1000 / 60);

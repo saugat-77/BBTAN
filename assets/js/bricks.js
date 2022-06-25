@@ -12,15 +12,16 @@ export default class Brick {
     // 0-black
     // 1-avatar
     this.tileMap = [
+      [2,2,2,2,2,2,2],
       [0,1,0,1,0,1,0],
       [0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0],
-      [1,0,0,0,0,0,0],
+      [1,1,1,1,1,1,1],
+      [2,2,2,2,2,2,2],
+      [1,1,1,1,1,1,1],
       [0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0]
     ];
     // this.levelMap = [
     //   [0, 0, 0, 0, 0, 0, 0],
@@ -68,13 +69,19 @@ export default class Brick {
             ctx.beginPath();
             ctx.rect(row*this.bricksize, column*this.bricksize, this.bricksize,this.bricksize);
             ctx.stroke();
+            ctx.strokeStyle = "purple";
             break;
+
           case 1:
-            // console.log("panas");
             image = this.avatar;
             // console.log("image1",image)
 
+          break;
+          
+            case 2:
+            ctx.fillRect( column*this.bricksize, row*this.bricksize, this.bricksize,this.bricksize)
             break;
+
         }
 
         if (image != null)
@@ -92,15 +99,19 @@ export default class Brick {
   clearCanvas(canvas, ctx) {
     // console.log("thakisakey yaar")
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
   setCanvasSize(canvas) {
     canvas.height = this.tileMap.length * this.bricksize;
-    console.log(this.bricksize)
+    const a=canvas.height
+    // console.log(this.bricksize)
     canvas.width = this.tileMap[0].length * this.bricksize;
-    console.log(canvas.width)
+    // console.log(canvas.width)
 
   }
+
+  
 }
 const brick1 = new Brick();
+// console.log(brick1.setCanvasSize())
