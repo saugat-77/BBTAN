@@ -5,14 +5,29 @@ function rand(max,min){
 function getAngleDeg(ax,ay,bx,by) {
   var angleRad = Math.atan((ay-by)/(ax-bx));
   var angleDeg = angleRad * 180 / Math.PI;
-  
   return(angleDeg);
 }
+
 function getDistance(xA, yA, xB, yB) { 
 	var xDiff = xA - xB; 
 	var yDiff = yA - yB;
-
 	return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 }
 
-// console.log()
+function color(){
+  let colors = [
+    "red",
+    "blue",
+    "red",
+    "green",
+    "yellow",
+    "orange",
+    "purple",
+    "pink",
+    "brown",
+    "grey",
+  ];
+  let x=rand(10,1)
+ return(colors[x])
+}
+

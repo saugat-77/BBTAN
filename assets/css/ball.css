@@ -12,9 +12,10 @@ body{
     width: 455px;
     margin: auto;
 }
-/* canvas{
-    background-color: rgb(122, 25, 25);
-} */
+canvas{
+    box-shadow: grey 10px 10px 10px ;
+    /* background-color: rgb(146, 138, 122); */
+}
 *::after{
     content:"";
     display: table;
@@ -22,20 +23,20 @@ body{
 }
 .container{
     position: relative;
-    margin-top:5px;
+    /* margin-top:5px; */
     min-height: 600px;
     max-width: 455px;
     border: 1px solid green; 
     /* background-color: blue; */
 }
-.top{
+/* .top{
     
     width: 100%;
     position: relative;
     top: 0;
     height: 15px;
-    /* border: 2px solid red; */
-}
+    border: 2px solid red;
+} */
 .middle{
     width: 100%;
     position: relative;
@@ -43,10 +44,10 @@ body{
     /* border: 2px solid red; */
 
 }
-.bottom{
+/* .bottom{
     width: 100%;
     position: relative;
     bottom: 0;
     height: 15px;
-    /* border: 2px solid red; */
-}
+    border: 2px solid red;
+} */
