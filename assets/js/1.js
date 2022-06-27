@@ -1,19 +1,17 @@
 import BrickController from "./brickController.js"; 
 import Brick from "./bricks.js"; 
+import Ball from "./ball.js"
 
 const tileMap = new Brick();
 const brickController=new BrickController(canvas)
-
+const player =new Ball(canvas,3)
+// const brick 
+// const ball
 // let val=color()
 
 function gameLoop() {
-  // console.log(canvas.width)
-  // console.log(canvas.height)
-  // console.log(ctx.clearRect(0,0,canvas.containerHeight,canvas.containerWidth))
   brickController.draw(canvas, ctx);
-  // console.log(tileMap.draw(canvas, ctx))
-  // ctx.fillStyle="orange";
-  // ctx.clearRect(0,0,canvas.height,canvas.width)
-  // console.log( ctx.clearRect(0,0,canvas.height,canvas.width))
+  player.drawBot(ctx)
+  
 }
 setInterval(gameLoop, 1000 / 60);

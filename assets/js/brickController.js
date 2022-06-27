@@ -6,16 +6,9 @@ import Brick from "./bricks.js";
 export default class BrickController {
 
   tileMap = [
-    //brickNum=0,1,2
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 2, 0, 3], //brickIndex=brick position
-    [0, 0, 4, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],//brickIndex=brick position
+    arr(),arr() ,arr(),arr(),arr(),arr(), arr()  //brickNum=0,1,2
   ];
-
   constructor(canvas, bricksize = 63) {
     this.canvas = canvas;
     this.brickRow = [];
@@ -30,7 +23,15 @@ export default class BrickController {
     this.setCanvasSize(canvas)
     this.drawMap(ctx);
   }
+  createArr(){
+    let arr=[]
+    for (let i=0;i<tileRowLen;i++){
 
+      arr.push[1,5]
+
+    }
+
+  }
   createBrick() {
 
     this.tileMap.forEach((row, rowIndex) => {
@@ -41,9 +42,11 @@ export default class BrickController {
         //brickIndex is column jaha brick huncha
         if (brickNum > 0) {
           // 0 is blank space
+          if(brickNum>0 &&brickNum<5){
+
           this.brickRow[rowIndex].push(
-            new Brick(brickIndex * 50, rowIndex * 32, brickNum)
-          );
+            new Brick(brickIndex*brickSize+spaceToCenter, rowIndex*brickSize+spaceToCenter, brickNum)
+          )};
         }
       });
     });
@@ -57,23 +60,30 @@ export default class BrickController {
         for (let rowIndex = 0; rowIndex < this.tileMap[row].length; rowIndex++) {
 
           const tile = this.tileMap[row][rowIndex];
-          
+
           this.brickRow.flat().forEach((brick) => {
           switch(tile){
-            
-            case 0:{
-                brick.incrementBlock()
+  
+            case 0:
+              {
+                brick.powerBlock(rowIndex*this.bricksize,row*this.bricksize,this.bricksize,this.bricksize)
+                // console.log(row,rowIndex)
                 break;
-            }
+              }
+              case 5:{
+                brick.incrementBlock(rowIndex*this.bricksize,row*this.bricksize,this.bricksize,this.bricksize,10)
+                break;
+              }
 
           default :
-            //   console.log(tile)
+
         if(tile==1 || tile==2||tile==3||tile==4){
             brick.draw(ctx);
         }
-    }  });
+    }  
+    });
     }
-        }
+    }
         
   
 
@@ -88,15 +98,15 @@ export default class BrickController {
     //       case 0:
     //         // console.log(ctx.beginPath());
 
-    //         // ctx.rect(
-    //         //   row * this.bricksize,
-    //         //   rowIndex * this.bricksize,
-    //         //   this.bricksize,
-    //         //   this.bricksize
-    //         // );
+            // ctx.rect(
+            //   row * this.bricksize,
+            //   rowIndex * this.bricksize,
+            //   this.bricksize,
+            //   this.bricksize
+            // );
 
-    //         // ctx.stroke();
-    //         // ctx.strokeStyle = "purple";
+            // ctx.stroke();
+            // ctx.strokeStyle = "purple";
     //         break;
             
     //         case 1:
@@ -137,7 +147,7 @@ export default class BrickController {
     
 
     setCanvasSize(canvas) {
-    canvas.height = this.tileMap.length * this.bricksize;
+    canvas.height = this.tileMap.length * this.bricksize+this.bricksize;
     // console.log(this.bricksize)
     canvas.width = this.tileMap[0].length * this.bricksize;
     // console.log(canvas.width)

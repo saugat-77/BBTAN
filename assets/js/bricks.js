@@ -3,17 +3,17 @@
 // 9*7 ko block banam and mathi ko chai khalo hola
 
 export default class Brick {
-  constructor(posBrickX, posBrickY,imageNumber,  color="yellow", health, bricksize = 63) {
+  constructor(posBrickX, posBrickY,imageNumber,  color="yellow", health) {
     this.posBrickX = posBrickX;
     this.posBrickY = posBrickY;
     this.color=color;
     this.health=health;
     this.image = new Image();
     this.image.src= `./assets/images/power${imageNumber}.png`
-    this.height=bricksize;
-    this.width=bricksize;
+    this.height=brickSize;
+    this.width=brickSize;
     this.temp=0
-    this.bricksize = bricksize;
+    this.bricksize = brickSize;
     
   }
 
@@ -24,15 +24,44 @@ export default class Brick {
   //   // console.log(img.src)
   //   return img;
   // }
-  incrementBlock(){
-    
-    
-  }
+  
   draw(ctx) {
-    // this.setCanvasSize(canvas); //this doesnot work
-    // this.drawMap(ctx);
-    ctx.drawImage(this.image,this.posBrickX,this.posBrickY,this.height,this.width)
+
+    ctx.drawImage(this.image,this.posBrickX,this.posBrickY,this.height-40,this.width-40)
   }
+
+  powerBlock(posBrickX,posBrickY,height,width){
+
+    ctx.rect(posBrickX,posBrickY,height,width)
+    ctx.stroke();
+    ctx.rect(posBrickX,posBrickY,height,width);
+    ctx.strokeRect(posBrickX,posBrickY,height,width);
+    ctx.strokeStyle = "purple";
+
+    //text
+    // ctx.font = "20px Arial";
+    // // console.log(posBrickY/63,posBrickX/63)
+    // ctx.fillText(this.posBrickX + this.width -70,
+    //   this.posBrickY + this.height -40
+    // );
+    // ctx.fillStyle = "black";
+
+    
+  }
+
+  incrementBlock(posBrickX,posBrickY,width,height,health){
+    // ctx.rect(posBrickX,posBrickY,height,width)
+    // ctx.stroke();
+    // ctx.rect(posBrickX,posBrickY,height,width);
+    // ctx.strokeRect(posBrickX,posBrickY,height,width);
+    // ctx.strokeStyle = "green";
+    //  text
+
+    ctx.font = "20px Arial";
+    ctx.fillText(health,posBrickX + spaceToCenter , posBrickY +spaceToCenter+20);
+    ctx.fillStyle = "black";
+  }
+
 
   // drawMap(ctx) {
     // console.log("3 inside drawMap in brick")

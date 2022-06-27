@@ -30,4 +30,32 @@ function color(){
   let x=rand(10,1)
  return(colors[x])
 }
+function arr(){
+  let arra=[]
+  for (let i=0; i<tileRowLen-2 ;i++){
+    let x=rand(0,6)   
+    if(x==1){
+      arra.push(0)
+    } 
+    else{
+      arra.push(x)   
+    }  
+  }
+  arra.push(1,0)
+  // console.log(arra)
+  let ctr = arra.length, temp, index;
 
+  while (ctr > 0) {
+  // Pick a random index
+      index = Math.floor(Math.random() * ctr);
+      ctr--;
+  // And swap the last element with it
+      temp = arra[ctr];
+      arra[ctr] = arra[index];
+      arra[index] = temp;
+  }
+  // console.log(arra)
+  return arra
+
+}
+arr()

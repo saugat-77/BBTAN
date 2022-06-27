@@ -6,3 +6,5 @@ const ctx = canvas.getContext("2d");
 const containerHeight = 565;
 const containerWidth = 455;
 const brickSize=63;
+const spaceToCenter=20;
+const tileRowLen=7;
