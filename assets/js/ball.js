@@ -1,11 +1,13 @@
 export default class Ball {
-  constructor(canvas,canvasHeight,canvasWidth,r=8) 
+  constructor(canvas,ctx,r=8) 
     {
     this.canvas=canvas;
     this.ctx=ctx;
     this.r = r;
-    this.px = canvasWidth/2;
-    this.py = canvasHeight-2*this.r;
+    // this.px = canvasWidth/2;
+    // this.py = canvasHeight-2*this.r;
+    this.px = canvas.width/2;
+    this.py = canvas.height-2*this.r;
     this.dx = 1;
     this.dy = -1;
     this.speedX = 2;
@@ -18,8 +20,10 @@ export default class Ball {
     this.brickX = 0;
     this.brickY = 0;
     this.angx = 0;  
-    this.botX=canvasWidth/2;
-    this.botY=containerHeight-165/2.4; 
+    // this.botX=canvasWidth/2;
+    // this.botY=containerHeight-165/2.4; 
+    this.botX=canvas.width/2;
+    this.botY=canvas.height-165/2.4; 
     this.imgHeroHeight=275/2;
     this.imgHeroWidth=165/2; 
     this.imgHero = new Image();
@@ -28,12 +32,12 @@ export default class Ball {
   }
   
   createBall() {
-    
-    ctx.arc(this.px - this.r,this.py - this.r,this.r,0,Math.PI * 2,false)
+    this.ctx.beginPath();
+    this.ctx.arc(this.px - this.r,this.py - this.r,this.r,0,Math.PI * 2,false)
     // ctx.fillRect(this.px - this.r,this.py - this.r,this.r,this.r);
     this.ctx.stroke();
     // this.ctx.strokeStyle="red"
-    // this.ctx.fillStyle = "blue";
+    this.ctx.fillStyle = "blue";
     this.ctx.fill();
     // this.ctx.fillColor(this.px, this.py, this.r)
     // this.ctx.clearArc(this.px - this.r,this.py - this.r,this.r,this.r)
@@ -59,6 +63,7 @@ export default class Ball {
     // ctx.fillStyle = "black";
     // this.collide()
     // console.log(this.px,this.py)
+    console.log(this.px,this.py)
 
   }
 
@@ -105,14 +110,15 @@ export default class Ball {
           // console.log("PX",this.px, this.py);
         });
 
-        for (let i = tileMap.length-1 ; i >=0; i--) {
-            if (i == tileMap.length - 1) {
-              tileMap[i] = [];
-            } else {
-              tileMap[i + 1] = tileMap[i];
-            }
-          }
-          tileMap[0] = arr();
+        tilemapfunc();
+        // for (let i = tileMap.length-1 ; i >=0; i--) {
+        //   if (i == tileMap.length - 1) {
+        //     tileMap[i] = [];
+        //   } else {
+        //     tileMap[i + 1] = tileMap[i];
+        //   }
+        // }
+        // tileMap[0] = arr();
           // console.log(tileMap);
 
 
@@ -122,10 +128,9 @@ export default class Ball {
     }
   }
 
-  mousePointer() {
+  mousePointer(ctx) {
     console.log(ctx)
     canvas.addEventListener('click' ,function (e) {
-      console.log("mayalu")
       // position of mouse
       this.curX = e.clientX;
       this.curY = e.clientY;
