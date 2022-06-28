@@ -13,6 +13,7 @@ body{
     margin: auto;
 }
 canvas{
+    
     box-shadow: grey 10px 10px 10px ;
     /* background-color: rgb(146, 138, 122); */
 }
@@ -40,7 +41,7 @@ canvas{
 .middle{
     width: 100%;
     position: relative;
-    height: 83vh;
+    /* height: 83vh; */
     /* border: 2px solid red; */
 
 }

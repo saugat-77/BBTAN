@@ -30,23 +30,14 @@ export default class Brick {
     ctx.drawImage(this.image,this.posBrickX,this.posBrickY,this.height-40,this.width-40)
   }
 
-  powerBlock(posBrickX,posBrickY,height,width){
+  blankBlock(posBrickX,posBrickY,height,width){
 
     ctx.rect(posBrickX,posBrickY,height,width)
     ctx.stroke();
     ctx.rect(posBrickX,posBrickY,height,width);
-    ctx.strokeRect(posBrickX,posBrickY,height,width);
-    ctx.strokeStyle = "purple";
-
-    //text
-    // ctx.font = "20px Arial";
-    // // console.log(posBrickY/63,posBrickX/63)
-    // ctx.fillText(this.posBrickX + this.width -70,
-    //   this.posBrickY + this.height -40
-    // );
-    // ctx.fillStyle = "black";
-
-    
+    ctx.fillStyle = "red";
+    ctx.fill();
+   
   }
 
   incrementBlock(posBrickX,posBrickY,width,height,health){

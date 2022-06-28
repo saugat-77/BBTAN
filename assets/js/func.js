@@ -36,19 +36,21 @@ function arr(){
   tempvar+=1
   
   if(tempvar%10==0){
-    arra.push(5,5,5)
+    arra.push(5,5,5,5)
   }
 
   else{
-    for (let i=0; i<tileRowLen-4 ;i++){
+    for (let i=0; i<tileMap.length-4 ;i++){
       let x=rand(0,6)  
       if(x==2 || x==3 || x==4) {
-        count+=1;
-        if(count=2){
+        count+=1; //2
+        if(count==2){
           arra.push(0)
+          continue;
         }
-        if(count=3){
+        if(count>=3){
           arra.push(5)
+          continue;
         }
       }
       if(x==1){
@@ -60,8 +62,7 @@ function arr(){
     }
     
   }
-  arra.push(1,0,5,5)
-  
+  arra.push(1,0,5)  
   // console.log(arra)
   let ctr = arra.length, temp, index;
 
@@ -74,6 +75,19 @@ function arr(){
       arra[ctr] = arra[index];
       arra[index] = temp;
   }
-  // console.log(arra)
   return arra
 }
+arr()
+
+
+
+function mousePointer() {
+  ctx.click = function (e) {
+    console.log("wth myan")
+    // position of mouse
+    let curX = e.clientX;
+    let curY = e.clientY;
+    console.log("mouse Pointer",curX,curY);
+  };
+}
+mousePointer()

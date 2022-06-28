@@ -1,13 +1,13 @@
 export default class Ball {
-  constructor(canvas,ctx,r=10) 
+  constructor(canvas,canvasHeight,canvasWidth,r=8) 
     {
     this.canvas=canvas;
     this.ctx=ctx;
-    this.px = canvas.width/ 2;
-    this.py = canvas.height-2*r;
-    this.dx = 1;
-    this.dy = 1;
     this.r = r;
+    this.px = canvasWidth/2;
+    this.py = canvasHeight-2*this.r;
+    this.dx = 1;
+    this.dy = -1;
     this.speedX = 2;
     this.speedY = 2;
     this.count = 0;
@@ -18,7 +18,7 @@ export default class Ball {
     this.brickX = 0;
     this.brickY = 0;
     this.angx = 0;  
-    this.botX=this.canvas.width/2;
+    this.botX=canvasWidth/2;
     this.botY=containerHeight-165/2.4; 
     this.imgHeroHeight=275/2;
     this.imgHeroWidth=165/2; 
@@ -26,20 +26,17 @@ export default class Ball {
     this.imgHero.src= "./assets/images/BBTAN-bot-game.png";
     
   }
-
+  
   createBall() {
-
-    // this.px = canvas.width/ 2;
-    // this.py = canvas.height-2*this.r;
-
-    // console.log(canvas.height)
-    // console.log(canvas.width)
-    console.log(this.px)
-
-    // ctx.arc(this.px - this.r,this.py - this.r,this.r,0,Math.PI * 2,false)
+    
+    ctx.arc(this.px - this.r,this.py - this.r,this.r,0,Math.PI * 2,false)
     // ctx.fillRect(this.px - this.r,this.py - this.r,this.r,this.r);
-    // ctx.strokeStyle = "black";
-    // ctx.stroke();
+    this.ctx.stroke();
+    // this.ctx.strokeStyle="red"
+    // this.ctx.fillStyle = "blue";
+    this.ctx.fill();
+    // this.ctx.fillColor(this.px, this.py, this.r)
+    // this.ctx.clearArc(this.px - this.r,this.py - this.r,this.r,this.r)
     
   }
   
@@ -51,84 +48,99 @@ export default class Ball {
   moveBall() {
     // console.log("inside moveball in ball.js");
     
-    this.ctx.clearRect(0, 0, containerWidth, containerHeight);
-    
     this.ctx.beginPath();
     this.px += this.speedX * this.dx;
     this.py += this.speedY * this.dy;
-    this.ctx.arc(this.px, this.py, this.r, 0, Math.PI * 2, false);
-    this.ctx.stroke();
+    // this.ctx.arc(this.px, this.py, this.r, 0, Math.PI * 2, false);
+    this.ctx.clearRect(0, 0, this.canvas.width, containerHeight);
+    // this.ctx.stroke();
+    // this.ctx.clearStroke()
+    // ctx.fill();
+    // ctx.fillStyle = "black";
     // this.collide()
     // console.log(this.px,this.py)
 
   }
 
-  // currentPosition() {
+  currentPosition() {
   //   // console.log("inside currentPos in ball.js");
 
-  //   this.px = this.px + this.speedX * this.dx;
-  //   this.py = this.py + this.speedY * this.dy;
+    this.px = this.px + this.speedX * this.dx;
+    this.py = this.py + this.speedY * this.dy;
 
         
   //   // console.log(imgHero)
-  //   // console.log("PX",this.px, this.py);
-  // }
+    console.log("PX",this.px, this.py);
+  }
 
-  // boundaryCheck() {
-  //   if (this.py <= 0 + this.r) {
-  //     // console.log("Top")
-  //     this.dy = 1;
-  //   }
+  boundaryCheck() {
+    if (this.py <= 0 + 2*this.r) {
+      // console.log("Top")
+      this.dy = 1;
+    }
 
-  //   if (this.px >= containerWidth - this.r) {
-  //     // console.log("Right")
-  //     this.dx = -1;
-  //   }
+    if (this.px >= this.canvas.width - 2*this.r) {
+      // console.log("Right")
+      this.dx = -1;
+    }
 
-  //   if (this.px <= 0 + this.r) {
-  //     // console.log("left")
-  //     this.dx = 1;
-  //   }
+    if (this.px <= 0 + 2*this.r) {
+      // console.log("left")
+      this.dx = 1;
+    }
 
-  //   if (this.py >= containerHeight - this.r) {
-  //     this.dy = -1;
-  //     this.count += 1;
-  //     // console.log(this.py+this.r)
+    if (this.py >= containerHeight - 2*this.r) {
+      this.dy = -1;
+      this.count += 1;
+      // if (this.py==containerHeight+this.r){
 
-  //     // if (this.py==containerHeight+this.r){
+      if (this.count >0) {
+        isMoving = false;
+        this.ballCount += 1;
+        this.mousePointer()
+        this.slope();
 
-  //     if (this.count > 4) {
-  //       //no reason but 4 choti tala thokincha
-  //       isMoving = false;
-  //       this.ballCount += 1;
-  //       this.slope();
-  //       document.addEventListener("click", () => {
-  //         isMoving = true;
-  //         // console.log("PX",this.px, this.py);
-  //       });
+        document.addEventListener("click", () => {
+          isMoving = true;
+          // console.log("PX",this.px, this.py);
+        });
 
-  //       // console.log(this.ballCount);
-  //     }
-  //     // }
-  //   }
-  // }
+        for (let i = tileMap.length-1 ; i >=0; i--) {
+            if (i == tileMap.length - 1) {
+              tileMap[i] = [];
+            } else {
+              tileMap[i + 1] = tileMap[i];
+            }
+          }
+          tileMap[0] = arr();
+          // console.log(tileMap);
 
-  // mousePointer() {
-  //   this.ctx.onmouseup = function (e) {
-  //     // position of mouse
-  //     this.curX = e.clientX;
-  //     this.curY = e.clientY;
-  //     // console.log("CX",this.curX,this.curY);
-  //   };
-  // }
 
-  // slope() {
-  //   this.angX = getAngleDeg(this.px, this.py, this.curX, this.curY);
-  //   this.dx = Math.cos(this.angX);
-  //   this.dy = Math.sin(this.angX);
-    
-  //   // console.log(angX)
-  // }
+        // console.log(this.ballCount);
+      }
+      // }
+    }
+  }
+
+  mousePointer() {
+    console.log(ctx)
+    canvas.addEventListener('click' ,function (e) {
+      console.log("mayalu")
+      // position of mouse
+      this.curX = e.clientX;
+      this.curY = e.clientY;
+      console.log("mouse Pointer",this.curX,this.curY);
+    });
+  }
+
+  slope() {
+
+    this.angX = getAngleDeg(this.px, this.py, this.curX, this.curY);
+    // console.log("cursor from slope",this.curX,this.curY)
+    // this.dx = Math.cos(this.angX);
+    // this.dy = Math.sin(this.angX);
+    // console.log(angX)
+  }
 
   // fallBricks() {
   //   let y = [1, 2, 3, 4, 5, 6];
@@ -166,24 +178,4 @@ export default class Ball {
     // }
 
   }
-  setCanvasSize(canvas) {
-    // console.log("wtf")
-    // canvas.height = 557;
-    // // console.log(this.bricksize)
-    // canvas.width =441;
-    // // console.log(canvas.width)
-    }
 }
-let isMoving = true;
-const ball1 = new Ball(10, ctx);
-ball1.createBall();
-
-setInterval(() => {
-  if (isMoving == true) {
-    // ball1.fallBricks();
-    // ball1.moveBall();
-    // ball1.boundaryCheck();
-    // ball1.currentPosition();
-    // ball1.mousePointer();
-  }
-}, 1000 / 60);
