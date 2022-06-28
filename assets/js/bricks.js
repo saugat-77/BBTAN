@@ -25,7 +25,7 @@ export default class Brick {
   //   return img;
   // }
   
-  draw(ctx) {
+  drawImg(ctx) {
 
     ctx.drawImage(this.image,this.posBrickX,this.posBrickY,this.height-40,this.width-40)
   }
@@ -131,7 +131,7 @@ export default class Brick {
   }
 
   // setCanvasSize(canvas) {
-  //   canvas.height = this.tileMap.length * this.bricksize;
+  //   canvas.height = this.tileMap.length * this.bricksize+this.bricksize;
   //   // console.log(this.bricksize)
   //   canvas.width = this.tileMap[0].length * this.bricksize;
   //   // console.log(canvas.width)

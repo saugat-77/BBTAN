@@ -1,5 +1,5 @@
 // x=[1,2,3,4,5,6,7]
-// rand(1,6(this include eauta ball paune wala power also))   1 box is always khaliand this
+// rand(1,6(this include eauta ball paune wala power also))   1 box is always plus 
 // 9*7 ko block banam and mathi ko chai khalo hola
 
 import Brick from "./bricks.js";
@@ -9,18 +9,20 @@ export default class BrickController {
     [0, 0, 0, 0, 0, 0, 0],//brickIndex=brick position
     arr(),arr() ,arr(),arr(),arr(),arr(), arr()  //brickNum=0,1,2
   ];
-  constructor(canvas, bricksize = 63) {
+  
+  constructor(canvas) {
     this.canvas = canvas;
     this.brickRow = [];
-    this.bricksize = bricksize;
+    this.bricksize = brickSize;
     this.createBrick();
+    // this.tileMap=tileMap
     this.row = 0;
     this.rowindex = 0;
     //   console.log(this.color)
   }
 
   draw(canvas, ctx) {
-    this.setCanvasSize(canvas)
+    // this.setCanvasSize(canvas)
     this.drawMap(ctx);
   }
   createArr(){
@@ -33,6 +35,13 @@ export default class BrickController {
 
   }
   createBrick() {
+    // for (let i=0;i<7;i++){
+    //   this.tileMap[i]=this.tileMap[i+1]
+    // }
+    // this.tileMap[0]=this.tileMap[1]
+    // this.tileMap[1]=this.tileMap[2]
+    // this.tileMap[2]=this.tileMap[3]
+    // console.log(this.tileMap)
 
     this.tileMap.forEach((row, rowIndex) => {
 
@@ -62,24 +71,28 @@ export default class BrickController {
           const tile = this.tileMap[row][rowIndex];
 
           this.brickRow.flat().forEach((brick) => {
+
           switch(tile){
   
             case 0:
               {
                 brick.powerBlock(rowIndex*this.bricksize,row*this.bricksize,this.bricksize,this.bricksize)
-                // console.log(row,rowIndex)
                 break;
               }
+
               case 5:{
                 brick.incrementBlock(rowIndex*this.bricksize,row*this.bricksize,this.bricksize,this.bricksize,10)
                 break;
               }
 
-          default :
+          default :{
 
         if(tile==1 || tile==2||tile==3||tile==4){
-            brick.draw(ctx);
+            brick.drawImg(ctx);
         }
+        break;
+
+      }
     }  
     });
     }
@@ -147,10 +160,10 @@ export default class BrickController {
     
 
     setCanvasSize(canvas) {
+
     canvas.height = this.tileMap.length * this.bricksize+this.bricksize;
-    // console.log(this.bricksize)
     canvas.width = this.tileMap[0].length * this.bricksize;
-    // console.log(canvas.width)
+
     }
 }
 

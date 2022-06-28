@@ -30,18 +30,38 @@ function color(){
   let x=rand(10,1)
  return(colors[x])
 }
+
 function arr(){
-  let arra=[]
-  for (let i=0; i<tileRowLen-2 ;i++){
-    let x=rand(0,6)   
-    if(x==1){
-      arra.push(0)
-    } 
-    else{
-      arra.push(x)   
-    }  
+  let arra=[], count=0
+  tempvar+=1
+  
+  if(tempvar%10==0){
+    arra.push(5,5,5)
   }
-  arra.push(1,0)
+
+  else{
+    for (let i=0; i<tileRowLen-4 ;i++){
+      let x=rand(0,6)  
+      if(x==2 || x==3 || x==4) {
+        count+=1;
+        if(count=2){
+          arra.push(0)
+        }
+        if(count=3){
+          arra.push(5)
+        }
+      }
+      if(x==1){
+        arra.push(0)
+      } 
+      else{
+        arra.push(x)   
+      }  
+    }
+    
+  }
+  arra.push(1,0,5,5)
+  
   // console.log(arra)
   let ctr = arra.length, temp, index;
 
@@ -56,6 +76,4 @@ function arr(){
   }
   // console.log(arra)
   return arra
-
 }
-arr()

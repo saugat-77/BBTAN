@@ -28,22 +28,24 @@ export default class Ball {
   }
 
   createBall() {
-    this.px = canvas.width/ 2;
-    this.py = canvas.height-2*this.r;
+
+    // this.px = canvas.width/ 2;
+    // this.py = canvas.height-2*this.r;
 
     // console.log(canvas.height)
     // console.log(canvas.width)
+    console.log(this.px)
 
-    ctx.arc(this.px - this.r,this.py - this.r,this.r,0,Math.PI * 2,false)
-    ctx.fillRect(this.px - this.r,this.py - this.r,this.r,this.r);
-    ctx.strokeStyle = "black";
-    ctx.stroke();
+    // ctx.arc(this.px - this.r,this.py - this.r,this.r,0,Math.PI * 2,false)
+    // ctx.fillRect(this.px - this.r,this.py - this.r,this.r,this.r);
+    // ctx.strokeStyle = "black";
+    // ctx.stroke();
     
   }
   
   
   drawBot(ctx){ //bot
-    // ctx.drawImage(this.imgHero, this.botX, this.botY, this.imgHeroWidth, this.imgHeroHeight);
+    ctx.drawImage(this.imgHero, this.botX, this.botY, this.imgHeroWidth, this.imgHeroHeight);
   }
   
   moveBall() {
@@ -142,27 +144,35 @@ export default class Ball {
   //   }
   // }
 
-  // collide() {
-  //   function clamp(val, min, max) {
-  //     return Math.max(min, Math.min(max, val));
-  //   }
+  collide() {
+    // function clamp(val, min, max) {
+    //   return Math.max(min, Math.min(max, val));
+    // }
 
-  //   // Find the closest point to the circle within the rectangle
-  //   // Assumes axis alignment! ie rect must not be rotated
-  //   let closestX = clamp(this.px, this.brickX, this.brickX + this.brickSize);
-  //   let closestY = clamp(this.py, this.brickY, this.brickY + this.brickSize);
+    // // Find the closest point to the circle within the rectangle
+    // // Assumes axis alignment! ie rect must not be rotated
+    // let closestX = clamp(this.px, this.brickX, this.brickX + this.brickSize);
+    // let closestY = clamp(this.py, this.brickY, this.brickY + this.brickSize);
 
-  //   // Calculate the distance between the circle's center and this closest point
-  //   let distanceX = this.px - closestX;
-  //   let distanceY = this.py - closestY;
+    // // Calculate the distance between the circle's center and this closest point
+    // let distanceX = this.px - closestX;
+    // let distanceY = this.py - closestY;
 
-  //   // If the distance is less than the circle's radius, an intersection occurs
-  //   let distanceSquared = distanceX * distanceX + distanceY * distanceY;
-  //   if (distanceSquared < this.r * this.r) {
-  //     console.log("collided");
-  //     // console.log("px", this.px, this.py);
-  //   }
-  // }
+    // // If the distance is less than the circle's radius, an intersection occurs
+    // let distanceSquared = distanceX * distanceX + distanceY * distanceY;
+    // if (distanceSquared < this.r * this.r) {
+    //   console.log("collided");
+    //   // console.log("px", this.px, this.py);
+    // }
+
+  }
+  setCanvasSize(canvas) {
+    // console.log("wtf")
+    // canvas.height = 557;
+    // // console.log(this.bricksize)
+    // canvas.width =441;
+    // // console.log(canvas.width)
+    }
 }
 let isMoving = true;
 const ball1 = new Ball(10, ctx);
