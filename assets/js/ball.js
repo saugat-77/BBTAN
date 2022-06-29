@@ -1,57 +1,56 @@
 export default class Ball {
-  constructor(canvas,ctx,r=8) 
-    {
-    this.canvas=canvas;
-    this.ctx=ctx;
+  constructor(canvas,ctx, r = 6) {
+    this.canvas = canvas;
+    this.ctx = ctx;    
     this.r = r;
-    // this.px = canvasWidth/2;
-    // this.py = canvasHeight-2*this.r;
-    this.px = canvas.width/2;
-    this.py = canvas.height-2*this.r;
+    this.px = canvas.width / 2;
+    this.py = canvas.height - 2 * this.r;
     this.dx = 1;
     this.dy = -1;
-    this.speedX = 2;
-    this.speedY = 2;
+    this.speedX = 7;
+    this.speedY = 7;
     this.count = 0;
     this.ballCount = 1;
     this.curX = 0;
     this.curY = 0;
     this.distance = 0;
-    this.brickX = 0;
-    this.brickY = 0;
-    this.angx = 0;  
-    // this.botX=canvasWidth/2;
-    // this.botY=containerHeight-165/2.4; 
-    this.botX=canvas.width/2;
-    this.botY=canvas.height-165/2.4; 
-    this.imgHeroHeight=275/2;
-    this.imgHeroWidth=165/2; 
+    // this.brickX = 0;
+    // this.brickY = 0;
+    this.angx = 0;
+    this.botX = canvas.width / 2;
+    this.botY = canvas.height - 165 / 2.4;
+    this.imgHeroHeight = 275 / 2;
+    this.imgHeroWidth = 165 / 2;
     this.imgHero = new Image();
-    this.imgHero.src= "./assets/images/BBTAN-bot-game.png";
-    
+    this.imgHero.src = "./assets/images/BBTAN-bot-game.png";
   }
-  
+
   createBall() {
     this.ctx.beginPath();
-    this.ctx.arc(this.px - this.r,this.py - this.r,this.r,0,Math.PI * 2,false)
+    this.ctx.arc(
+      this.px - this.r,
+      this.py - this.r,
+      this.r,
+      0,
+      Math.PI * 2,
+      false
+    );
     // ctx.fillRect(this.px - this.r,this.py - this.r,this.r,this.r);
     this.ctx.stroke();
     // this.ctx.strokeStyle="red"
-    this.ctx.fillStyle = "blue";
+    this.ctx.fillStyle = "white";
     this.ctx.fill();
     // this.ctx.fillColor(this.px, this.py, this.r)
     // this.ctx.clearArc(this.px - this.r,this.py - this.r,this.r,this.r)
-    
   }
-  
-  
+
   drawBot(ctx){ //bot
     ctx.drawImage(this.imgHero, this.botX, this.botY, this.imgHeroWidth, this.imgHeroHeight);
   }
-  
+
   moveBall() {
     // console.log("inside moveball in ball.js");
-    
+
     this.ctx.beginPath();
     this.px += this.speedX * this.dx;
     this.py += this.speedY * this.dy;
@@ -63,84 +62,78 @@ export default class Ball {
     // ctx.fillStyle = "black";
     // this.collide()
     // console.log(this.px,this.py)
-    console.log(this.px,this.py)
-
+    // console.log(this.px,this.py)
   }
 
   currentPosition() {
-  //   // console.log("inside currentPos in ball.js");
+    //   // console.log("inside currentPos in ball.js");
 
     this.px = this.px + this.speedX * this.dx;
     this.py = this.py + this.speedY * this.dy;
 
-        
-  //   // console.log(imgHero)
-    console.log("PX",this.px, this.py);
   }
 
-  boundaryCheck() {
-    if (this.py <= 0 + 2*this.r) {
+  boundaryCheck(canvas) {
+    if (this.py <= 0 + 2 * this.r) {
       // console.log("Top")
       this.dy = 1;
     }
 
-    if (this.px >= this.canvas.width - 2*this.r) {
+    if (this.px >= this.canvas.width - this.r) {
       // console.log("Right")
       this.dx = -1;
     }
 
-    if (this.px <= 0 + 2*this.r) {
+    if (this.px <= 0 + 2 * this.r) {
       // console.log("left")
       this.dx = 1;
     }
 
-    if (this.py >= containerHeight - 2*this.r) {
-      this.dy = -1;
-      this.count += 1;
-      // if (this.py==containerHeight+this.r){
+    if (this.py >= containerHeight - 2 * this.r) {
 
-      if (this.count >0) {
+      console.log("hahaha ")
+      this.botX = this.px + this.speedX * this.dx;
+
+      // console.log("inside check",this.px,this.py)
+     
+
+      // this.count += 1;
+      // if (this.py==containerHeight+this.r){
+        console.log(this.px,this.py)
+
+      // if (this.count > 0) {
+        this.mousePointer(canvas,this.px,this.py);
         isMoving = false;
         this.ballCount += 1;
-        this.mousePointer()
+        // this.mousePointer(canvas);
         this.slope();
 
         document.addEventListener("click", () => {
           isMoving = true;
-          // console.log("PX",this.px, this.py);
         });
 
-        tilemapfunc();
-        // for (let i = tileMap.length-1 ; i >=0; i--) {
-        //   if (i == tileMap.length - 1) {
-        //     tileMap[i] = [];
-        //   } else {
-        //     tileMap[i + 1] = tileMap[i];
-        //   }
-        // }
-        // tileMap[0] = arr();
-          // console.log(tileMap);
-
-
-        // console.log(this.ballCount);
+        // tilemapfunc();
+        this.dy = -1;
       }
-      // }
-    }
+
+    // }
   }
 
-  mousePointer(ctx) {
-    console.log(ctx)
-    canvas.addEventListener('click' ,function (e) {
-      // position of mouse
+  mousePointer(canvas,px,py) {
+    canvas.addEventListener("mousedown", function (e) {
+
       this.curX = e.clientX;
       this.curY = e.clientY;
-      console.log("mouse Pointer",this.curX,this.curY);
+      console.log("mouse Pointer", this.curX, this.curY);
+      console.log("cursor Pointer", px, py);
+
+      // let sad= getDistance(this.curX,this.curY,px,py)
+      // console.log(getDistance(this.curX,this.curY,px,py))
     });
   }
 
   slope() {
-
-    this.angX = getAngleDeg(this.px, this.py, this.curX, this.curY);
+    // this.angX = getAngleDeg(this.px, this.py, this.curX, this.curY);
     // console.log("cursor from slope",this.curX,this.curY)
     // this.dx = Math.cos(this.angX);
     // this.dy = Math.sin(this.angX);
@@ -161,26 +154,23 @@ export default class Ball {
   //   }
   // }
 
-  collide() {
-    // function clamp(val, min, max) {
-    //   return Math.max(min, Math.min(max, val));
-    // }
-
-    // // Find the closest point to the circle within the rectangle
-    // // Assumes axis alignment! ie rect must not be rotated
-    // let closestX = clamp(this.px, this.brickX, this.brickX + this.brickSize);
-    // let closestY = clamp(this.py, this.brickY, this.brickY + this.brickSize);
-
+  collide(brickX,brickY) {
+    console.log("where are you")
+    function clamp(val, min, max) {
+      return Math.max(min, Math.min(max, val));
+    }
+    // Find the closest point to the circle within the rectangle
+    // Assumes axis alignment! ie rect must not be rotated
+    let closestX = clamp(this.px, brickX, brickX + this.brickSize);
+    let closestY = clamp(this.py, brickY, brickY + this.brickSize);
     // // Calculate the distance between the circle's center and this closest point
-    // let distanceX = this.px - closestX;
-    // let distanceY = this.py - closestY;
-
+    let distanceX = this.px - closestX;
+    let distanceY = this.py - closestY;
     // // If the distance is less than the circle's radius, an intersection occurs
-    // let distanceSquared = distanceX * distanceX + distanceY * distanceY;
-    // if (distanceSquared < this.r * this.r) {
-    //   console.log("collided");
-    //   // console.log("px", this.px, this.py);
-    // }
-
+    let distanceSquared = distanceX * distanceX + distanceY * distanceY;
+    if (distanceSquared < this.r * this.r) {
+      console.log("collided");
+      // console.log("px", this.px, this.py);
+    }
   }
 }

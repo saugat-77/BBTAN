@@ -3,6 +3,7 @@
 // 9*7 ko block banam and mathi ko chai khalo hola
 
 import Brick from "./bricks.js";
+import Ball from "./ball.js"
 export default class BrickController {
 
   constructor(canvas) {
@@ -18,29 +19,19 @@ export default class BrickController {
   }
 
   draw(canvas, ctx) {
-    this.setCanvasSize(canvas)
+    // this.setCanvasSize(canvas)
     this.drawMap(ctx);
   }
-  createArr(){
-    let arr=[]
-    for (let i=0;i<tileRowLen;i++){
 
-      arr.push[1,5]
+  // createArr(){
+  //   let arr=[]
+  //   for (let i=0;i<tileRowLen;i++){
+  //     arr.push[1,5]
+  //   }
 
-    }
-
-  }
+  // }
   createBrick(tileMap) {
 
-    // for (let i=7;i>0;i--){
-    //   tileMap[i]=tileMap[i-1]
-    // }
-
-
-    // tileMap[0]=tileMap[1]
-    // tileMap[1]=tileMap[2]
-    // tileMap[2]=tileMap[3]
-    // console.log(tileMap)
 
     tileMap.forEach((row, rowIndex) => {
 
@@ -70,6 +61,40 @@ export default class BrickController {
           const tile = tileMap[row][rowIndex];
           this.brickRow.flat().forEach((brick) => {
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // if(tile==5){
+            //   const ball2= new Ball()
+            //   ball2.collide(row*this.bricksize,rowIndex*this.bricksize)
+            // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           switch(tile){
   
             case 0:
@@ -88,6 +113,23 @@ export default class BrickController {
         if(tile==1 || tile==2||tile==3||tile==4){
           
             brick.drawImg(ctx);
+
+
+
+
+            // if(tile==1 || tile==2||tile==3||tile==4){
+            //   const ball2= new Ball()
+            //   ball2.collide(row*this.bricksize,rowIndex*this.bricksize)
+            // }
+
+
+
+
+
+
+
+
+
         }
         break;
 
@@ -158,12 +200,12 @@ export default class BrickController {
   }
     
 
-    setCanvasSize(canvas) {
+    // setCanvasSize(canvas) {
 
-    canvas.height = tileMap.length * this.bricksize+this.bricksize;
-    canvas.width = tileMap[0].length * this.bricksize;
+    // canvas.height = tileMap.length * this.bricksize+this.bricksize;
+    // canvas.width = tileMap[0].length * this.bricksize;
 
-    }
+    // }
 }
 
 // const brick1 = new Brick();

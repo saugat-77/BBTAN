@@ -35,7 +35,7 @@ export default class Brick {
     ctx.rect(posBrickX,posBrickY,height,width)
     ctx.stroke();
     ctx.rect(posBrickX,posBrickY,height,width);
-    ctx.fillStyle = "red";
+    // ctx.fillStyle = "red";
     ctx.fill();
    
   }
@@ -50,7 +50,7 @@ export default class Brick {
 
     ctx.font = "20px Arial";
     ctx.fillText(health,posBrickX + spaceToCenter , posBrickY +spaceToCenter+20);
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
   }
 
 

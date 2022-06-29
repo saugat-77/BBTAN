@@ -3,15 +3,23 @@ function rand(max,min){
   }
 
 function getAngleDeg(ax,ay,bx,by) {
-  var angleRad = Math.atan((ay-by)/(ax-bx));
-  var angleDeg = angleRad * 180 / Math.PI;
+  let angleRad = Math.atan((ay-by)/(ax-bx));
+  let angleDeg = angleRad * 180 / Math.PI;
   return(angleDeg);
 }
-
+// let x=0
 function getDistance(xA, yA, xB, yB) { 
-	var xDiff = xA - xB; 
-	var yDiff = yA - yB;
+  // y+=1
+  let xDiff=0
+  let yDiff=0
+	xDiff = xA - xB; 
+	yDiff = yA - yB;
+  
+  // let ang=Math.abs(yDiff)/Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+  // console.log(Math.sin(ang))
+
 	return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+  // console.log(y)
 }
 
 function color(){
@@ -77,17 +85,17 @@ function arr(){
   }
   return arra
 }
-arr()
+// arr()
 
 
-
-function mousePointer() {
-  ctx.click = function (e) {
-    console.log("wth myan")
-    // position of mouse
-    let curX = e.clientX;
-    let curY = e.clientY;
-    console.log("mouse Pointer",curX,curY);
-  };
-}
-mousePointer()
+function tilemapfunc(){
+  for (let i = tileMap.length-1 ; i >=0; i--) {
+      if (i == tileMap.length - 1) {
+        tileMap[i] = [];
+      } else {
+        tileMap[i + 1] = tileMap[i];
+      }
+    }
+    tileMap[0] = arr();
+  }
+tilemapfunc()
