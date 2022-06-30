@@ -1,16 +1,20 @@
-// x=[1,2,3,4,5,6,7]
-// rand(1,6(this include eauta ball paune wala power also))   1 box is always plus 
-// 9*7 ko block banam and mathi ko chai khalo hola
 
 import Brick from "./bricks.js";
 import Ball from "./ball.js"
-export default class BrickController {
 
+const ball2=new Ball(canvas,ctx)
+
+
+export default class BrickController {
+    
   constructor(canvas) {
     this.canvas = canvas;
     this.brickRow = [];
     this.bricksize = brickSize;
     this.createBrick(tileMap);
+    this.r=6;
+    this.val1=0;
+    this.val2=0;
     this.row = 0;
     this.rowindex = 0;
     // tileMap 
@@ -23,13 +27,6 @@ export default class BrickController {
     this.drawMap(ctx);
   }
 
-  // createArr(){
-  //   let arr=[]
-  //   for (let i=0;i<tileRowLen;i++){
-  //     arr.push[1,5]
-  //   }
-
-  // }
   createBrick(tileMap) {
 
 
@@ -51,84 +48,40 @@ export default class BrickController {
     });
   }
 
+  // drawMap(brick1,ctx)
 
     drawMap(ctx) {
-      // console.log(tileMap)
-    // console.log("3 inside drawMap in brick")
-      
-    for (let row = 0; row < tileMap.length; row++) {
-        for (let rowIndex = 0; rowIndex < tileMap[row].length; rowIndex++) {
-          const tile = tileMap[row][rowIndex];
-          this.brickRow.flat().forEach((brick) => {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // if(tile==5){
-            //   const ball2= new Ball()
-            //   ball2.collide(row*this.bricksize,rowIndex*this.bricksize)
-            // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      for (let rowNo = 0; rowNo < tileMap.length; rowNo++) {
+        for (let colNum = 0; colNum < tileMap[rowNo].length; colNum++) {
+          const tile = tileMap[rowNo][colNum];
+          // console.log("comment",tile)
+          this.brickRow.flat().forEach((brick) => {           
           switch(tile){
-  
+        
             case 0:
               {
-                brick.blankBlock(rowIndex*this.bricksize,row*this.bricksize,this.bricksize,this.bricksize)
+                brick.blankBlock(colNum*this.bricksize,rowNo*this.bricksize,this.bricksize,this.bricksize)
                 break;
               }
 
               case 5:{
-                brick.incrementBlock(rowIndex*this.bricksize,row*this.bricksize,this.bricksize,this.bricksize,10)
+
+                ctx.clearRect(rowNo*this.bricksize,colNum*this.bricksize,this.bricksize,this.bricksize);
+                brickPosX.push(rowNo*this.bricksize)
+                brickPosY.push(colNum*this.bricksize)
+                brick.incrementBlock(colNum*this.bricksize,rowNo*this.bricksize,this.bricksize,this.bricksize,health)
                 break;
-              }
+              }         
 
           default :{
-
-        if(tile==1 || tile==2||tile==3||tile==4){
-          
+         
+        if(tile==1 || tile==2||tile==3||tile==4 ||tile==5){
             brick.drawImg(ctx);
-
-
-
-
             // if(tile==1 || tile==2||tile==3||tile==4){
             //   const ball2= new Ball()
-            //   ball2.collide(row*this.bricksize,rowIndex*this.bricksize)
+            //   ball2.collide(rowNo*this.bricksize,colNum*this.bricksize)
             // }
-
-
-
-
-
-
-
-
 
         }
         break;
@@ -138,10 +91,10 @@ export default class BrickController {
     });
     }
     }
-        
-  
 
-    // for (let row = 0; row < tileMap.length; row++) {
+    // return[brickPosX,brickPosY]
+  }
+  // for (let row = 0; row < tileMap.length; row++) {
     //   for (let rowIndex = 0; rowIndex < tileMap[row].length; rowIndex++) {
     //     const tile = tileMap[row][rowIndex];
     //     let image = null;
@@ -206,7 +159,11 @@ export default class BrickController {
     // canvas.width = tileMap[0].length * this.bricksize;
 
     // }
-}
+
 
 // const brick1 = new Brick();
 // console.log(brick1.setCanvasSize())
+
+
+// tilemapfunc()
+// tilemapfunc()

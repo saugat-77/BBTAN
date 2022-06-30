@@ -1,3 +1,6 @@
+import BrickController from "./brickController.js";
+
+const abcd=new BrickController(canvas,ctx)
 function rand(max,min){
     return Math.floor(Math.random()*(max-min)+min)
   }
@@ -8,10 +11,11 @@ function getAngleDeg(ax,ay,bx,by) {
   return(angleDeg);
 }
 // let x=0
+
 function getDistance(xA, yA, xB, yB) { 
   // y+=1
-  let xDiff=0
-  let yDiff=0
+  let xDiff=0;
+  let yDiff=0;
 	xDiff = xA - xB; 
 	yDiff = yA - yB;
   
@@ -31,7 +35,7 @@ function color(){
     "yellow",
     "orange",
     "purple",
-    "pink",
+    "white",
     "brown",
     "grey",
   ];
@@ -91,11 +95,18 @@ function arr(){
 function tilemapfunc(){
   for (let i = tileMap.length-1 ; i >=0; i--) {
       if (i == tileMap.length - 1) {
-        tileMap[i] = [];
+        // for (let d=0;d<tileMap[i].length;d++){
+        //   // console.log(tileMap[d])
+          tileMap[i] = [0, 0, 0, 0, 0, 0, 0];
+        // }
       } else {
         tileMap[i + 1] = tileMap[i];
       }
     }
     tileMap[0] = arr();
+    // abcd.draw(canvas,ctx)
+    console.log(tileMap);
+    return tileMap
   }
 tilemapfunc()
+export {tilemapfunc}
