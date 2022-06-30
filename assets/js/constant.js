@@ -34,3 +34,16 @@ let tileMap = [
   ];
 // console.log(tileMap.length)
 
+
+// const startScreen=document.querySelector(".start")
+// const endScreen=document.querySelector(".end")
+
+// document.addEventListener('click',start);
+
+// function start(){
+//     startScreen.classList.add('hide');
+// console.log("1")
+// }
+// if (fail){
+// endScreen.classList.remove("hide") // search how to remove a class i am confused syntax
+// }

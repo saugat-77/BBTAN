@@ -1,4 +1,4 @@
-// import {tilemapfunc} from "./func.js"
+import {tilemapfunc} from "./func.js"
 import Collide from "./collide.js";
 const collide1=new Collide()
 
@@ -11,8 +11,8 @@ export default class Ball {
     this.py = canvas.height - 2 * this.r;
     // this.dx = 1;
     // this.dy = -1;
-    this.speedX = 7;
-    this.speedY = 7;
+    this.speedX = 3;
+    this.speedY = 3;
     this.count = 0;
     this.ballCount = 1;
     this.curX = 0;
@@ -39,13 +39,9 @@ export default class Ball {
       Math.PI * 2,
       false
     );
-    // ctx.fillRect(this.px - this.r,this.py - this.r,this.r,this.r);
     this.ctx.stroke();
-    // this.ctx.strokeStyle="red"
     this.ctx.fillStyle = "white";
     this.ctx.fill();
-    // this.ctx.fillColor(this.px, this.py, this.r)
-    // this.ctx.clearArc(this.px - this.r,this.py - this.r,this.r,this.r)
   }
 
   drawBot(ctx){ //bot
@@ -58,21 +54,25 @@ export default class Ball {
     this.px += this.speedX * dx;
     this.py += this.speedY * dy;
     this.ctx.clearRect(0, 0, this.canvas.width, containerHeight);
-    // console.log(this.py)
     collide1.moveBall(this.px,this.py)
+    // console.log("dfhgsds",this.px,this.py)
 
   }
 
-  currentPosition() {
-      // console.log("inside currentPos in ball.js");
+  // currentPosition() {
+  //     // console.log("inside currentPos in ball.js");
 
-    this.px = this.px + this.speedX * dx;
-    this.py = this.py + this.speedY * dy;
-    return [this.px,this.py]
+  //   this.px = this.px + this.speedX * dx;
+  //   this.py = this.py + this.speedY * dy;
+  //   // return [this.px,this.py]
+  //   // console.log("ball position curr", this.px, this.py);
+  //   // this.mousePointer(canvas,this.px,this.py);
+    
 
-  }
+  // }
 
   boundaryCheck() {
+    // console.log(this.px,this.py)
     if (this.py <=  2 * this.r) {
       // console.log("Top")
       dy = 1;
@@ -90,45 +90,48 @@ export default class Ball {
 
     if (this.py >= containerHeight - 2 * this.r) {
 
-      // console.log("hahaha ")
       this.botX = this.px + this.speedX * dx;
-
       dy = -1;
       // console.log("inside check",this.px,this.py)
      
+      this.mousePointer(canvas,this.px,this.py)
 
       // this.count += 1;
       // if (this.py==containerHeight+this.r){
         // console.log(this.px,this.py)
 
       // if (this.count > 0) {
-        this.mousePointer(canvas,this.px,this.py);
+
         isMoving = false;
         this.ballCount += 1;
         health+=1
-        // this.mousePointer(canvas);
         this.slope();
 
-        document.addEventListener("click", () => {
+        document.addEventListener("mousedown", () => {
           isMoving = true;
         });
         collide1.brickPos()
 
+        // tilemapfunc()
       }
 
-    // }
   }
 
-  mousePointer(canvas,px,py) {
-    canvas.addEventListener("mousedown", function (e) {
+  mousePointer(canvas) {
+    // console.log(this.canvas)
+    let abc=this.px;
+    let def=this.py;
+    canvas.addEventListener("click", function (e) {
 
       this.curX = e.clientX;
       this.curY = e.clientY;
-      console.log("mouse Pointer", this.curX, this.curY);
-      console.log("ball position", px, py);
+      // this.slope()
+      console.log("cursor",this.curX,this.curY)  //need current value here
+      console.log("ball position mouse", abc, def);
 
     });
   }
+  
 
   slope() {
     // this.angX = getAngleDeg(this.px, this.py, this.curX, this.curY);

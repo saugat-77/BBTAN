@@ -1,4 +1,3 @@
-
 import Brick from "./bricks.js";
 import Ball from "./ball.js"
 
@@ -41,7 +40,7 @@ export default class BrickController {
           if(brickNum>0 &&brickNum<5){
 
           this.brickRow[rowIndex].push(
-            new Brick(brickIndex*brickSize+spaceToCenter, rowIndex*brickSize+spaceToCenter, brickNum)
+            new Brick(rowIndex*brickSize+spaceToCenter,brickIndex*brickSize+spaceToCenter, brickNum)
           )};
         }
       });
@@ -61,13 +60,11 @@ export default class BrickController {
         
             case 0:
               {
-                brick.blankBlock(colNum*this.bricksize,rowNo*this.bricksize,this.bricksize,this.bricksize)
+                brick.blankBlock(rowNo*this.bricksize,colNum*this.bricksize,this.bricksize,this.bricksize)
                 break;
               }
 
               case 5:{
-
-                ctx.clearRect(rowNo*this.bricksize,colNum*this.bricksize,this.bricksize,this.bricksize);
                 brickPosX.push(rowNo*this.bricksize)
                 brickPosY.push(colNum*this.bricksize)
                 brick.incrementBlock(colNum*this.bricksize,rowNo*this.bricksize,this.bricksize,this.bricksize,health)

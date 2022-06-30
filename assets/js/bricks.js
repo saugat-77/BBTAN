@@ -35,20 +35,22 @@ export default class Brick {
   incrementBlock(posBrickX,posBrickY,width,height,health){
     // ctx.rect(posBrickX,posBrickY,height,width)
     // ctx.stroke();
-    // ctx.rect(posBrickX,posBrickY,height,width);
-    // ctx.strokeRect(posBrickX,posBrickY,height,width);
-    // ctx.strokeStyle = "green";
+    ctx.beginPath();
+    ctx.rect(posBrickX,posBrickY,height,width);
+    ctx.strokeRect(posBrickX,posBrickY,height,width);
+    ctx.strokeStyle = "black";
     //  text
 
-    ctx.beginPath();
     // ctx.rect(posBrickX,posBrickY,height,width)
     // ctx.stroke();
     // ctx.strokeStyle="gray";
     // ctx.beginPath()
-    // ctx.strokeStyle="white"
-    ctx.rect(posBrickX,posBrickY,height,width);
+    // ctx.strokeStyle="white";
+    // ctx.clearRect(posBrickX,posBrickY,brickSize,brickSize);
+    // ctx.rect(posBrickX,posBrickY,height,width);
     ctx.fillStyle = "gray";
     ctx.fill();
+
 
 
     this.textContent(posBrickX,posBrickY,health)
@@ -56,7 +58,7 @@ export default class Brick {
   textContent(posBrickX,posBrickY,health){
     ctx.font = "20px Arial";
     ctx.fillText(health,posBrickX + spaceToCenter , posBrickY +spaceToCenter+20);
-    ctx.fillStyle = "gray";
+    ctx.fillStyle = "white";
   }
 }
 

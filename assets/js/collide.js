@@ -10,28 +10,34 @@ export default class Collide{
         this.r=r;
         this.valX=[];
         this.valY=[];
-        this.tempX=[];
-        this.tempY=[];
+        this.fiveX=[];
+        this.fiveY=[];
+        this.fourX=[];
+        this.fourY=[];
         this.valFive=0;
     }
     brickPos(){
-        this.tileArr=tilemapfunc()
 
+        this.tileArr=tilemapfunc()
         for (let i=0;i<this.tileArr.length;i++){
             for (let j=0;j<this.tileArr[0].length;j++){
 
-
                 if(this.tileArr[i][j]==5){
 
-                    this.valX.push(i*brickSize);
-                    this.valY.push(j*brickSize);
-                    this.tempX=this.valX;
-                    this.tempY=this.valY;
-                }   
+                    this.fiveX.push(j*brickSize);
+                    this.fiveY.push(i*brickSize);
+                } 
+                if(this.tileArr[i][j]==4){
+                    this.fourX.push(j*brickSize);
+                    this.fourY.push(i*brickSize);
+                }
             }
         }
-        this.valX=[]
-        this.valY=[]
+
+        // this.fiveX=this.valX;
+        // this.fiveY=this.valY;
+        // this.valX=[]
+        // this.valY=[]
     }
 
     
@@ -40,9 +46,8 @@ export default class Collide{
         this.ballX=px;
         this.ballY=py;
 
-        for(let i=0;i<this.tempX.length;i++){
-            this.collide(this.tempX[i],this.tempY[i]);
-
+        for(let i=0;i<this.fiveX.length;i++){
+            this.collide(this.fiveX[i],this.fiveY[i]);
         }
 
     }
@@ -69,6 +74,7 @@ export default class Collide{
             console.log("tala bata hanyo")
             dx=-1*dx
         }
+
         if(py>=brickY && py<=brickY+brickSize){
         console.log("side bata handyo")
         dy=-1*dy

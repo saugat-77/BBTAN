@@ -97,15 +97,16 @@ function tilemapfunc(){
       if (i == tileMap.length - 1) {
         // for (let d=0;d<tileMap[i].length;d++){
         //   // console.log(tileMap[d])
-          tileMap[i] = [0, 0, 0, 0, 0, 0, 0];
+          tileMap[i] = [];
         // }
       } else {
         tileMap[i + 1] = tileMap[i];
       }
     }
-    tileMap[0] = arr();
+    tileMap[0] =[0, 0, 0, 0, 0, 0, 0]
+    tileMap[1] = arr();
     // abcd.draw(canvas,ctx)
-    console.log(tileMap);
+    // console.log(tileMap);
     return tileMap
   }
 tilemapfunc()
