@@ -10,20 +10,14 @@ function getAngleDeg(ax,ay,bx,by) {
   let angleDeg = angleRad * 180 / Math.PI;
   return(angleDeg);
 }
-// let x=0
+
 
 function getDistance(xA, yA, xB, yB) { 
-  // y+=1
   let xDiff=0;
   let yDiff=0;
 	xDiff = xA - xB; 
 	yDiff = yA - yB;
-  
-  // let ang=Math.abs(yDiff)/Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-  // console.log(Math.sin(ang))
-
-	return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-  // console.log(y)
+  return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 }
 
 function color(){
@@ -75,28 +69,23 @@ function arr(){
     
   }
   arra.push(1,0,5)  
-  // console.log(arra)
   let ctr = arra.length, temp, index;
 
   while (ctr > 0) {
-  // Pick a random index
       index = Math.floor(Math.random() * ctr);
       ctr--;
-  // And swap the last element with it
       temp = arra[ctr];
       arra[ctr] = arra[index];
       arra[index] = temp;
   }
   return arra
 }
-// arr()
 
 
 function tilemapfunc(){
   for (let i = tileMap.length-1 ; i >=0; i--) {
       if (i == tileMap.length - 1) {
-        // for (let d=0;d<tileMap[i].length;d++){
-        //   // console.log(tileMap[d])
+
           tileMap[i] = [];
         // }
       } else {
@@ -105,9 +94,20 @@ function tilemapfunc(){
     }
     tileMap[0] =[0, 0, 0, 0, 0, 0, 0]
     tileMap[1] = arr();
-    // abcd.draw(canvas,ctx)
-    // console.log(tileMap);
+
     return tileMap
   }
 tilemapfunc()
 export {tilemapfunc}
+export {color}
+export {getAngleDeg}
+
+document.addEventListener('click',start);
+
+function start(){
+    startScreen.classList.add('hide');
+    container.classList.remove('hide');
+    topContainer.classList.remove('hide')
+
+
+}

@@ -1,4 +1,4 @@
-import { tilemapfunc } from "./func.js";
+import { getAngleDeg, tilemapfunc } from "./func.js";
 
 export default class Collide{
     constructor(r=6){
@@ -14,7 +14,6 @@ export default class Collide{
         this.fiveY=[];
         this.fourX=[];
         this.fourY=[];
-        this.valFive=0;
     }
     brickPos(){
 
@@ -33,11 +32,6 @@ export default class Collide{
                 }
             }
         }
-
-        // this.fiveX=this.valX;
-        // this.fiveY=this.valY;
-        // this.valX=[]
-        // this.valY=[]
     }
 
     
@@ -65,19 +59,27 @@ export default class Collide{
         let distanceSquared = distanceX * distanceX + distanceY * distanceY;
 
         if (distanceSquared < this.r * this.r) {
-        this.afterCollision(this.ballX,this.ballY,brickX,brickY)
+            
+            let abc=getAngleDeg(this.ballX,this.ballY,brickX,brickY);
+            this.afterCollision(this.ballX,this.ballY,brickX,brickY,abc);
         }
     }
 
-    afterCollision(px,py,brickX,brickY){
+    afterCollision(px,py,brickX,brickY,angX){
+        console.log(angX)
         if(px>=brickX && px<=brickX+brickSize){
-            console.log("tala bata hanyo")
+            // console.log("tala bata hanyo")
+            // dx = Math.cos(this.angX)*-1;
+            
             dx=-1*dx
         }
+        
+        if(py>=brickY && py<=brickY+brickSize,angX){
+            // console.log("side bata handyo")
+            // dy = Math.sin(this.angX)*-1;
 
-        if(py>=brickY && py<=brickY+brickSize){
-        console.log("side bata handyo")
-        dy=-1*dy
+            dy=-1*dy;
+
         }
     }
 }
