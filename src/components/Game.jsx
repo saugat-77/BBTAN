@@ -8,6 +8,12 @@ export default function Game() {
   const height = 600;
   const EPS = 0.5;
 
+  const ROWS = 6;
+  const COLS = 8;
+  const blockWidth = width / COLS;
+  const blockHeight = height/9; 
+  const blocks = useRef([]); // store rows + columns
+
 
   const ball = useRef({
     x: width / 2,
@@ -28,12 +34,16 @@ export default function Game() {
 
   //shoot when users clicks
   const handleClick = (e) => {
-    const rect = canvasRef.current.getBoundingClientRect();
     
+    const rect = canvasRef.current.getBoundingClientRect();
+    const b = ball.current;
+
+    if (b.moving) return;
+
+        // Only allow firing if the ball is at the bottom and not moving
 
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
-    const b = ball.current;
 
     let dirX = clickX - b.x; // how far right (or left)
     let dirY = clickY - b.y; // how far down (or up)
@@ -43,7 +53,7 @@ export default function Game() {
     dirX /= len;
     dirY /= len;
 
-      // apply speed
+    // apply speed
     b.dx = dirX * b.speed;
     b.dy = dirY * b.speed;
     b.moving = true;
@@ -55,7 +65,7 @@ export default function Game() {
     const b = ball.current;
 
     b.x += b.dx;
-    b.y -= b.dy;
+    b.y += b.dy;
 
     // Simple bouncing off walls (horizontal only for now)
     if (b.x - b.radius < 0 || b.x + b.radius > width) {
@@ -74,7 +84,7 @@ export default function Game() {
       // Stop at bottom
     if (b.y + b.radius >= height) {
         b.moving = false;
-        b.y = height - b.radius;
+        b.y = height - 2* b.radius;
         b.dx = 0;
         b.dy = 0;
     }
@@ -90,10 +100,64 @@ export default function Game() {
     ctx.beginPath();
     ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
     ctx.fill();
+
+    // Draw blocks
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+        if (!blocks.current[r][c]) continue;
+    
+        const x = c * blockWidth;
+        const y = r * blockHeight;
+    
+        ctx.fillStyle = "cyan";
+        ctx.fillRect(x + 2, y + 2, blockWidth - 4, blockHeight - 4);
+        }
+    }
+  
   };
+
+  //Generate the blocks
+  const generateBlocks = () => {
+    const newBlocks = [];
+  
+    for (let row = 0; row < ROWS; row++) {
+      // Top and bottom row empty
+      if (row === 0|| row === ROWS - 1) {
+        newBlocks.push(Array(COLS).fill(false));
+        continue;
+      }
+  
+      // Fill row with false (empty)
+      const rowData = Array(COLS).fill(false);
+  
+      // Random number of blocks 3–6
+      const numBlocks = Math.floor(Math.random() * 4) + 3; // 3,4,5,6
+  
+      // Available middle columns (1–6)
+      const availableCols = [1,2,3,4,5,6];
+  
+      // Shuffle available columns
+      for (let i = availableCols.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [availableCols[i], availableCols[j]] = [availableCols[j], availableCols[i]];
+      }
+  
+      // Place blocks in the first numBlocks shuffled columns
+      for (let i = 0; i < numBlocks; i++) {
+        const c = availableCols[i];
+        rowData[c] = true; // block exists
+      }
+  
+      newBlocks.push(rowData);
+    }
+  
+    blocks.current = newBlocks;
+  };
+  
 
   // Game loop
   useEffect(() => {
+    generateBlocks();
     let frameId;
 
     const loop = () => {
@@ -109,11 +173,12 @@ export default function Game() {
   }, []);
 
   return (
+    <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
     <canvas
       ref={canvasRef}
       width={width}
       height={height}
-      onClick={handleClick}
+      onClick={handleClick} 
       style={{
         background: "#111",
         display: "block",
@@ -121,5 +186,6 @@ export default function Game() {
         border: "2px solid #333"
       }}
     />
+    </div>
   );
 }
