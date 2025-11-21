@@ -7,8 +7,10 @@ export default function Game() {
   const width = 400;
   const height = 600;
   const EPS = 0.5;
+  const currentRowValue = useRef(1);
+  const totalBalls = useRef(1); 
 
-  const ROWS = 6;
+  const ROWS = 8;
   const COLS = 8;
   const blockWidth = width / COLS;
   const blockHeight = height/9; 
@@ -21,7 +23,7 @@ export default function Game() {
     radius: 10,
     dx: 0,
     dy: 0,
-    speed: 5,
+    speed: 10,
     moving: false
   });
   
@@ -87,7 +89,9 @@ export default function Game() {
         b.y = height - 2* b.radius;
         b.dx = 0;
         b.dy = 0;
+        shiftRowsDown();
     }
+    checkBlockCollisions();
   };
 
   // Draw everything on canvas
@@ -101,58 +105,152 @@ export default function Game() {
     ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // Draw blocks
+// Draw blocks
     for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
-        if (!blocks.current[r][c]) continue;
+    
+        const block = blocks.current[r][c];
+        if (!block || !block.exists) continue;
     
         const x = c * blockWidth;
         const y = r * blockHeight;
     
-        ctx.fillStyle = "cyan";
-        ctx.fillRect(x + 2, y + 2, blockWidth - 4, blockHeight - 4);
+        if (block.isPickup) {
+            ctx.fillStyle = "gold";  // pickup color
+            ctx.fillRect(x + 2, y + 2, blockWidth - 4, blockHeight - 4);
+          
+            ctx.fillStyle = "black";
+            ctx.font = "16px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("+1", x + blockWidth / 2, y + blockHeight / 2);
+          } else {
+            ctx.fillStyle = "cyan"; 
+            ctx.fillRect(x + 2, y + 2, blockWidth - 4, blockHeight - 4);
+          
+            ctx.fillStyle = "black";
+            ctx.fillText(block.value, x + blockWidth / 2, y + blockHeight / 2);
+          }
+          
         }
     }
-  
   };
 
-  //Generate the blocks
-  const generateBlocks = () => {
-    const newBlocks = [];
+  //create one row of blocks
+  const generateRow = (value = 1, isEmpty = false) => {
+    if (isEmpty) return Array(COLS).fill(false);
   
-    for (let row = 0; row < ROWS; row++) {
-      // Top and bottom row empty
-      if (row === 0|| row === ROWS - 1) {
-        newBlocks.push(Array(COLS).fill(false));
-        continue;
-      }
+    const rowData = Array(COLS).fill(false);
   
-      // Fill row with false (empty)
-      const rowData = Array(COLS).fill(false);
+    const numBlocks = Math.floor(Math.random() * 4) + 3; // 3–6 normal blocks
+    const availableCols = [...Array(COLS).keys()];
   
-      // Random number of blocks 3–6
-      const numBlocks = Math.floor(Math.random() * 4) + 3; // 3,4,5,6
-  
-      // Available middle columns (1–6)
-      const availableCols = [1,2,3,4,5,6];
-  
-      // Shuffle available columns
-      for (let i = availableCols.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [availableCols[i], availableCols[j]] = [availableCols[j], availableCols[i]];
-      }
-  
-      // Place blocks in the first numBlocks shuffled columns
-      for (let i = 0; i < numBlocks; i++) {
-        const c = availableCols[i];
-        rowData[c] = true; // block exists
-      }
-  
-      newBlocks.push(rowData);
+    // shuffle
+    for (let i = availableCols.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [availableCols[i], availableCols[j]] = [availableCols[j], availableCols[i]];
     }
   
-    blocks.current = newBlocks;
+    // Place normal blocks
+    for (let i = 0; i < numBlocks; i++) {
+      const c = availableCols[i];
+      rowData[c] = { exists: true, value }; 
+    }
+  
+    // Possibly add a pickup block in remaining columns
+    const remainingCols = availableCols.slice(numBlocks);
+    if (remainingCols.length > 0 && Math.random() < 0.8) {
+      const pickupCol = remainingCols[0];
+      rowData[pickupCol] = { exists: true, value: 0, isPickup: true };
+    }
+  
+    return rowData;
   };
+  
+  
+  
+  //Generate the blocks
+  const generateBlocks = () => {
+    const rows = [];
+  
+    rows.push(generateRow(1, true));     // row 0 empty
+    rows.push(generateRow(1));           // row 1 random
+  
+    for (let i = 2; i < ROWS; i++) {
+      rows.push(generateRow(1, true));   // remaining rows empty
+    }
+  
+    blocks.current = rows;
+  };
+  
+  
+  const shiftRowsDown = () => {
+    const rows = blocks.current;
+  
+    // remove bottom row
+    rows.pop();
+  
+    // increase difficulty
+    currentRowValue.current += 1;
+  
+    // insert a new row at row 1
+    rows.splice(1, 0, generateRow(currentRowValue.current));
+  
+    blocks.current = rows;
+  };
+
+  const checkBlockCollisions = () => {
+    const b = ball.current;
+  
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+  
+        const block = blocks.current[r][c];
+        if (!block || !block.exists) continue;
+  
+        const x = c * blockWidth;
+        const y = r * blockHeight;
+  
+        // Rectangle boundary
+        const left = x;
+        const right = x + blockWidth;
+        const top = y;
+        const bottom = y + blockHeight;
+  
+        // Closest point on rectangle to ball
+        const closestX = Math.max(left, Math.min(b.x, right));
+        const closestY = Math.max(top, Math.min(b.y, bottom));
+  
+        const distX = b.x - closestX;
+        const distY = b.y - closestY;
+  
+        // Collision check
+        if (distX * distX + distY * distY <= b.radius * b.radius) {
+  
+            // Bounce
+            const overlapX = b.x < left || b.x > right;
+            const overlapY = b.y < top || b.y > bottom;
+          
+            if (overlapX) b.dx *= -1;
+            if (overlapY) b.dy *= -1;
+          
+            // Handle pickup
+            if (block.isPickup) {
+              totalBalls.current += 1;  // Increment balls
+              blocks.current[r][c] = false;  // remove pickup
+            } else {
+              // Normal block
+              block.value -= 1;
+              if (block.value <= 0) blocks.current[r][c] = false;
+            }
+          
+            return; // stop after first collision
+          }
+          
+      }
+    }
+  };
+  
   
 
   // Game loop
