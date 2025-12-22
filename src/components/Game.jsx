@@ -77,14 +77,10 @@ export default function Game() {
     // Simple bouncing off top 
     if (b.y - b.radius < 0) {
       b.dy *= -1;
-    }else if (b.y -4* b.radius > height) {
-      // Reset ball to top if it goes off bottom
-      b.x = width / 2;
-      b.y = 600-4*Math.PI * 2;
     }
 
       // Stop at bottom
-    if (b.y + b.radius >= height) {
+    if (b.moving && b.y + b.radius >= height) {
         b.moving = false;
         b.y = height - 2* b.radius;
         b.dx = 0;
@@ -186,6 +182,7 @@ export default function Game() {
   
   const shiftRowsDown = () => {
     const rows = blocks.current;
+    const bottomRow = blocks.current[ROWS - 1];
   
     // remove bottom row
     rows.pop();
@@ -197,6 +194,10 @@ export default function Game() {
     rows.splice(1, 0, generateRow(currentRowValue.current));
   
     blocks.current = rows;
+    if (bottomRow.some(b => b && b.exists)) {
+      alert("Game Over");
+      window.location.reload();
+    }
   };
 
   const checkBlockCollisions = () => {
@@ -244,14 +245,11 @@ export default function Game() {
               if (block.value <= 0) blocks.current[r][c] = false;
             }
           
-            return; // stop after first collision
+            return;
           }
-          
       }
     }
   };
-  
-  
 
   // Game loop
   useEffect(() => {
