@@ -17,16 +17,11 @@ export default function Game() {
   const blocks = useRef([]); // store rows + columns
 
 
-  const ball = useRef({
-    x: width / 2,
-    y: height - 20,
-    radius: 10,
-    dx: 0,
-    dy: 0,
-    speed: 10,
-    moving: false
-  });
-  
+  const ball = useRef([]);
+  const returnX = useRef(null);
+  const turnEnded = useRef(false);
+  const score = useRef(0);
+
 
   // Setup canvas context
   useEffect(() => {
@@ -34,72 +29,123 @@ export default function Game() {
     ctxRef.current = canvas.getContext("2d");
   }, []);
 
-  //shoot when users clicks
+  const createBall = (x, y, dx, dy) => ({
+    x,
+    y,
+    radius: 10,
+    dx,
+    dy,
+    speed: 10,
+    moving: true
+  });
+  
+
   const handleClick = (e) => {
-    
     const rect = canvasRef.current.getBoundingClientRect();
-    const b = ball.current;
+    turnEnded.current = false;
+  
+    if (ball.current.some(b => b.moving)) return;
 
-    if (b.moving) return;
-
-        // Only allow firing if the ball is at the bottom and not moving
-
+  
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
+    const startX = returnX.current ?? width / 2;
 
-    let dirX = clickX - b.x; // how far right (or left)
-    let dirY = clickY - b.y; // how far down (or up)
-
-    // normalize
-    const len = Math.sqrt(dirX*dirX + dirY*dirY);
+  
+    let dirX = clickX - startX;
+    let dirY = clickY - (height - 20);
+  
+    const len = Math.sqrt(dirX * dirX + dirY * dirY) || 1;
     dirX /= len;
     dirY /= len;
-
-    // apply speed
-    b.dx = dirX * b.speed;
-    b.dy = dirY * b.speed;
-    b.moving = true;
-
-
+  
+    ball.current = [];
+  
+    for (let i = 0; i < totalBalls.current; i++) {
+      ball.current.push(
+        createBall(
+          startX,
+          height - 20,
+          dirX * 10,
+          dirY * 10
+        )
+      );
+    }
+    shootBalls(startX, dirX, dirY);
   };
+    
+
   // Update the ball's position
   const update = () => {
-    const b = ball.current;
-
-    b.x += b.dx;
-    b.y += b.dy;
-
-    // Simple bouncing off walls (horizontal only for now)
-    if (b.x - b.radius < 0 || b.x + b.radius > width) {
-      b.dx *= -1;
-    }
-
-    // Simple bouncing off top 
-    if (b.y - b.radius < 0) {
-      b.dy *= -1;
-    }
-
-      // Stop at bottom
-    if (b.moving && b.y + b.radius >= height) {
+    let movingCount = 0;
+  
+    ball.current.forEach(b => {
+      if (!b.moving) return;
+  
+      movingCount++;
+  
+      b.x += b.dx;
+      b.y += b.dy;
+  
+      // walls
+      if (b.x - b.radius < 0 || b.x + b.radius > width) {
+        b.dx *= -1;
+      }
+  
+      if (b.y - b.radius < 0) {
+        b.dy *= -1;
+      }
+  
+      // bottom
+      if (b.y + b.radius >= height) {
         b.moving = false;
-        b.y = height - 2* b.radius;
+        b.y = height - 2 * b.radius;
         b.dx = 0;
         b.dy = 0;
-        shiftRowsDown();
+        if (returnX.current === null) {
+          returnX.current = b.x;
+        }
+        returnX.current = b.x;
+      }
+        
+    
+      checkBlockCollisions(b);
+    });
+  
+    // when all balls stopped → shift rows
+    if (
+      ball.current.length > 0 &&
+      movingCount === 0 &&
+      !turnEnded.current
+    ) {
+      turnEnded.current = true;
+    
+      ball.current.forEach(b => {
+        b.x = returnX.current;
+        b.y = height - 20;
+        b.moving = false;
+      });
+    
+      // returnX.current = null;
+      shiftRowsDown();
     }
-    checkBlockCollisions();
+    
   };
+  
 
   // Draw everything on canvas
   const draw = () => {
     const ctx = ctxRef.current;
-    const b = ball.current;
+    // const b = ball.current;
     ctx.clearRect(0, 0, width, height);
     // Draw ball
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-    ctx.fill();
+    ball.current.forEach(b => {
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    
 
 // Draw blocks
     for (let r = 0; r < ROWS; r++) {
@@ -163,6 +209,17 @@ export default function Game() {
     return rowData;
   };
   
+  //multiple balls because of delay
+  const shootBalls = (startX, dirX, dirY) => {
+    for (let i = 0; i < totalBalls.current; i++) {
+      setTimeout(() => {
+        ball.current.push(
+          createBall(startX, height - 20, dirX * 10, dirY * 10)
+        );
+      }, i * 90); // 50ms delay between balls
+    }
+  };
+  
   
   
   //Generate the blocks
@@ -194,14 +251,21 @@ export default function Game() {
     rows.splice(1, 0, generateRow(currentRowValue.current));
   
     blocks.current = rows;
+    for (let r = 0; r < ROWS; r++) {
+      const row = blocks.current[r];
+      if (row.some(b => b && b.exists && !b.isPickup)) {
+        score.current = Math.max(...row.map(b => b?.value || 0));
+        break;
+      }
+    }
+
     if (bottomRow.some(b => b && b.exists)) {
-      alert("Game Over");
-      window.location.reload();
+      console.log("Game Over");
+      // window.location.reload();
     }
   };
 
-  const checkBlockCollisions = () => {
-    const b = ball.current;
+  const checkBlockCollisions = (b) => {
   
     for (let r = 0; r < ROWS; r++) {
       for (let c = 0; c < COLS; c++) {
@@ -229,11 +293,16 @@ export default function Game() {
         if (distX * distX + distY * distY <= b.radius * b.radius) {
   
             // Bounce
-            const overlapX = b.x < left || b.x > right;
-            const overlapY = b.y < top || b.y > bottom;
-          
-            if (overlapX) b.dx *= -1;
-            if (overlapY) b.dy *= -1;
+            const dxLeft = Math.abs(b.x - left);
+            const dxRight = Math.abs(b.x - right);
+            const dyTop = Math.abs(b.y - top);
+            const dyBottom = Math.abs(b.y - bottom);
+
+            if (Math.min(dxLeft, dxRight) < Math.min(dyTop, dyBottom)) {
+              b.dx *= -1;
+            } else {
+              b.dy *= -1;
+            }
           
             // Handle pickup
             if (block.isPickup) {
@@ -269,7 +338,11 @@ export default function Game() {
   }, []);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 20 }}>
+    {/* Display Score */}
+    <div style={{ color: "white", textAlign: "center", marginBottom: 10 }}>
+      Score: {score.current}
+    </div>
     <canvas
       ref={canvasRef}
       width={width}
@@ -283,5 +356,6 @@ export default function Game() {
       }}
     />
     </div>
+    
   );
 }
