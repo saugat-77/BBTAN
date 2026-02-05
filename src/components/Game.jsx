@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 export default function Game() {
   const canvasRef = useRef(null);
@@ -8,7 +8,17 @@ export default function Game() {
   const height = 600;
   const EPS = 0.5;
   const currentRowValue = useRef(1);
-  const totalBalls = useRef(1); 
+  const totalBalls = useRef(1);
+
+  // State management
+  const [gameStarted, setGameStarted] = useState(false);
+  const [playerName, setPlayerName] = useState("");
+  const [score, setScore] = useState(0);
+  const [ballCount, setBallCount] = useState(1);
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem("bbtan_highscore");
+    return saved ? JSON.parse(saved) : { score: 0, name: "N/A" };
+  }); 
 
   const ROWS = 8;
   const COLS = 8;
@@ -20,14 +30,16 @@ export default function Game() {
   const ball = useRef([]);
   const returnX = useRef(null);
   const turnEnded = useRef(false);
-  const score = useRef(0);
 
 
   // Setup canvas context
   useEffect(() => {
+    if (!gameStarted) return;
     const canvas = canvasRef.current;
-    ctxRef.current = canvas.getContext("2d");
-  }, []);
+    if (canvas) {
+      ctxRef.current = canvas.getContext("2d");
+    }
+  }, [gameStarted]);
 
   const createBall = (x, y, dx, dy) => ({
     x,
@@ -41,36 +53,28 @@ export default function Game() {
   
 
   const handleClick = (e) => {
+    if (!gameStarted) return;
+
     const rect = canvasRef.current.getBoundingClientRect();
     turnEnded.current = false;
-  
+
     if (ball.current.some(b => b.moving)) return;
 
-  
+
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
     const startX = returnX.current ?? width / 2;
 
-  
+
     let dirX = clickX - startX;
     let dirY = clickY - (height - 20);
-  
+
     const len = Math.sqrt(dirX * dirX + dirY * dirY) || 1;
     dirX /= len;
     dirY /= len;
-  
+
+    // Clear the array and shoot balls with delay
     ball.current = [];
-  
-    for (let i = 0; i < totalBalls.current; i++) {
-      ball.current.push(
-        createBall(
-          startX,
-          height - 20,
-          dirX * 10,
-          dirY * 10
-        )
-      );
-    }
     shootBalls(startX, dirX, dirY);
   };
     
@@ -251,18 +255,27 @@ export default function Game() {
     rows.splice(1, 0, generateRow(currentRowValue.current));
   
     blocks.current = rows;
-    for (let r = 0; r < ROWS; r++) {
-      const row = blocks.current[r];
-      if (row.some(b => b && b.exists && !b.isPickup)) {
-        score.current = Math.max(...row.map(b => b?.value || 0));
-        break;
-      }
+
+    // Check for game over
+    if (bottomRow.some(b => b && b.exists)) {
+      handleGameOver();
+    }
+  };
+
+  const handleGameOver = () => {
+    // Update high score if needed
+    if (score > highScore.score) {
+      const newHighScore = { score, name: playerName };
+      setHighScore(newHighScore);
+      localStorage.setItem("bbtan_highscore", JSON.stringify(newHighScore));
     }
 
-    if (bottomRow.some(b => b && b.exists)) {
-      console.log("Game Over");
-      // window.location.reload();
-    }
+    // Reset game
+    setTimeout(() => {
+      if (window.confirm(`Game Over! Score: ${score}\nPlay again?`)) {
+        window.location.reload();
+      }
+    }, 100);
   };
 
   const checkBlockCollisions = (b) => {
@@ -307,11 +320,15 @@ export default function Game() {
             // Handle pickup
             if (block.isPickup) {
               totalBalls.current += 1;  // Increment balls
+              setBallCount(prev => prev + 1); // Update state for UI
               blocks.current[r][c] = false;  // remove pickup
             } else {
               // Normal block
               block.value -= 1;
-              if (block.value <= 0) blocks.current[r][c] = false;
+              if (block.value <= 0) {
+                blocks.current[r][c] = false;
+                setScore(prev => prev + 1); // Increment score when block is destroyed
+              }
             }
           
             return;
@@ -322,11 +339,18 @@ export default function Game() {
 
   // Game loop
   useEffect(() => {
+    if (!gameStarted) return;
+
     generateBlocks();
+
+    // Reset return position and initialize ball at center
+    returnX.current = width / 2;
+    ball.current = [createBall(width / 2, height - 20, 0, 0)];
+    ball.current[0].moving = false;
+
     let frameId;
 
     const loop = () => {
-      
       update();
       draw();
       frameId = requestAnimationFrame(loop);
@@ -335,27 +359,161 @@ export default function Game() {
     loop(); // start the game loop
 
     return () => cancelAnimationFrame(frameId);
-  }, []);
+  }, [gameStarted]);
 
-  return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 20 }}>
-    {/* Display Score */}
-    <div style={{ color: "white", textAlign: "center", marginBottom: 10 }}>
-      Score: {score.current}
-    </div>
-    <canvas
-      ref={canvasRef}
-      width={width}
-      height={height}
-      onClick={handleClick} 
-      style={{
+  const handleStartGame = (e) => {
+    e.preventDefault();
+    if (playerName.trim()) {
+      setGameStarted(true);
+    } else {
+      alert("Please enter your name!");
+    }
+  };
+
+  // Player name input screen
+  if (!gameStarted) {
+    return (
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
         background: "#111",
-        display: "block",
-        margin: "20px auto",
-        border: "2px solid #333"
-      }}
-    />
+        color: "white"
+      }}>
+        <h1 style={{ marginBottom: 30, fontSize: "3em", color: "#4CAF50" }}>BBTAN</h1>
+
+        <div style={{
+          background: "#222",
+          padding: "30px",
+          borderRadius: "10px",
+          border: "2px solid #444",
+          minWidth: "300px"
+        }}>
+          <h2 style={{ marginBottom: 20, textAlign: "center" }}>High Score</h2>
+          <div style={{
+            textAlign: "center",
+            fontSize: "1.2em",
+            marginBottom: 30,
+            color: "#FFD700"
+          }}>
+            <div>{highScore.score} pts</div>
+            <div style={{ fontSize: "0.8em", color: "#aaa" }}>by {highScore.name}</div>
+          </div>
+
+          <form onSubmit={handleStartGame}>
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", marginBottom: 10 }}>
+                Enter Your Name:
+              </label>
+              <input
+                type="text"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                placeholder="Player name"
+                autoFocus
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  fontSize: "1em",
+                  borderRadius: "5px",
+                  border: "1px solid #666",
+                  background: "#333",
+                  color: "white"
+                }}
+              />
+            </div>
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "12px",
+                fontSize: "1.1em",
+                background: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                fontWeight: "bold"
+              }}
+            >
+              Start Game
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // Game screen
+  return (
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      minHeight: "100vh",
+      background: "#111",
+      paddingTop: 20
+    }}>
+      {/* Score display */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-around",
+        width: "400px",
+        color: "white",
+        fontSize: "1.2em",
+        marginBottom: 10,
+        padding: "10px",
+        background: "#222",
+        borderRadius: "5px"
+      }}>
+        <div>
+          <span style={{ color: "#aaa" }}>Player: </span>
+          <span style={{ fontWeight: "bold" }}>{playerName}</span>
+        </div>
+        <div>
+          <span style={{ color: "#aaa" }}>Balls: </span>
+          <span style={{ fontWeight: "bold", color: "#FFD700" }}>×{ballCount}</span>
+        </div>
+        <div>
+          <span style={{ color: "#aaa" }}>Score: </span>
+          <span style={{ fontWeight: "bold", color: "#4CAF50" }}>{score}</span>
+        </div>
+      </div>
+
+      {/* High score display */}
+      <div style={{
+        color: "#FFD700",
+        fontSize: "0.9em",
+        marginBottom: 10
+      }}>
+        High Score: {highScore.score} ({highScore.name})
+      </div>
+
+      {/* Game canvas */}
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        onClick={handleClick}
+        style={{
+          background: "#111",
+          display: "block",
+          border: "2px solid #333",
+          cursor: "crosshair"
+        }}
+      />
+
+      {/* Instructions */}
+      <div style={{
+        color: "#888",
+        fontSize: "0.9em",
+        marginTop: 10,
+        textAlign: "center"
+      }}>
+        Click to aim and shoot • Destroy blocks to score • Collect gold +1 balls
+      </div>
     </div>
-    
   );
 }
