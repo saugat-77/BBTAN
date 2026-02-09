@@ -75,6 +75,8 @@ export default function Game() {
 
     // Clear the array and shoot balls with delay
     ball.current = [];
+    // Reset return position so first ball to land sets it
+    returnX.current = null;
     shootBalls(startX, dirX, dirY);
   };
     
@@ -106,10 +108,10 @@ export default function Game() {
         b.y = height - 2 * b.radius;
         b.dx = 0;
         b.dy = 0;
+        // Only set return position for the first ball that lands
         if (returnX.current === null) {
           returnX.current = b.x;
         }
-        returnX.current = b.x;
       }
         
     
