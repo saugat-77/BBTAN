@@ -30,6 +30,7 @@ export default function Game() {
   const ball = useRef([]);
   const returnX = useRef(null);
   const turnEnded = useRef(false);
+  const mousePos = useRef({ x: width / 2, y: height / 2 });
 
 
   // Setup canvas context
@@ -79,7 +80,16 @@ export default function Game() {
     returnX.current = null;
     shootBalls(startX, dirX, dirY);
   };
-    
+
+  const handleMouseMove = (e) => {
+    if (!gameStarted) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    mousePos.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  };
+
 
   // Update the ball's position
   const update = () => {
@@ -156,31 +166,79 @@ export default function Game() {
 // Draw blocks
     for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
-    
+
         const block = blocks.current[r][c];
         if (!block || !block.exists) continue;
-    
+
         const x = c * blockWidth;
         const y = r * blockHeight;
-    
+
         if (block.isPickup) {
             ctx.fillStyle = "gold";  // pickup color
             ctx.fillRect(x + 2, y + 2, blockWidth - 4, blockHeight - 4);
-          
+
             ctx.fillStyle = "black";
             ctx.font = "16px Arial";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("+1", x + blockWidth / 2, y + blockHeight / 2);
           } else {
-            ctx.fillStyle = "cyan"; 
+            ctx.fillStyle = "cyan";
             ctx.fillRect(x + 2, y + 2, blockWidth - 4, blockHeight - 4);
-          
+
             ctx.fillStyle = "black";
             ctx.fillText(block.value, x + blockWidth / 2, y + blockHeight / 2);
           }
-          
+
         }
+    }
+
+    // Draw aiming arrow when balls are not moving
+    const hasMovingBalls = ball.current.some(b => b.moving);
+    if (!hasMovingBalls && ball.current.length > 0) {
+      const startX = returnX.current ?? width / 2;
+      const startY = height - 20;
+      const mouse = mousePos.current;
+
+      // Calculate direction
+      let dirX = mouse.x - startX;
+      let dirY = mouse.y - startY;
+      const len = Math.sqrt(dirX * dirX + dirY * dirY) || 1;
+      dirX /= len;
+      dirY /= len;
+
+      // Draw line from ball to mouse (or 300px max)
+      const lineLength = Math.min(len, 300);
+      const endX = startX + dirX * lineLength;
+      const endY = startY + dirY * lineLength;
+
+      // Draw dashed line
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+      ctx.setLineDash([]); // Reset dash
+
+      // Draw arrowhead
+      const arrowSize = 10;
+      const angle = Math.atan2(dirY, dirX);
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.beginPath();
+      ctx.moveTo(endX, endY);
+      ctx.lineTo(
+        endX - arrowSize * Math.cos(angle - Math.PI / 6),
+        endY - arrowSize * Math.sin(angle - Math.PI / 6)
+      );
+      ctx.lineTo(
+        endX - arrowSize * Math.cos(angle + Math.PI / 6),
+        endY - arrowSize * Math.sin(angle + Math.PI / 6)
+      );
+      ctx.closePath();
+      ctx.fill();
     }
   };
 
@@ -499,6 +557,7 @@ export default function Game() {
         width={width}
         height={height}
         onClick={handleClick}
+        onMouseMove={handleMouseMove}
         style={{
           background: "#111",
           display: "block",
