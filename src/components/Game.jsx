@@ -70,9 +70,23 @@ export default function Game() {
     let dirX = clickX - startX;
     let dirY = clickY - (height - 20);
 
-    const len = Math.sqrt(dirX * dirX + dirY * dirY) || 1;
-    dirX /= len;
-    dirY /= len;
+    // Calculate angle from horizontal (in degrees)
+    let angle = Math.atan2(-dirY, dirX) * (180 / Math.PI);
+
+    // Clamp angle between 10 and 170 degrees
+    const MIN_ANGLE = 10;
+    const MAX_ANGLE = 170;
+
+    if (angle < MIN_ANGLE) {
+      angle = MIN_ANGLE;
+    } else if (angle > MAX_ANGLE) {
+      angle = MAX_ANGLE;
+    }
+
+    // Convert back to radians and calculate new direction
+    const angleRad = angle * (Math.PI / 180);
+    dirX = Math.cos(angleRad);
+    dirY = -Math.sin(angleRad); // Negative because canvas Y is inverted
 
     // Clear the array and shoot balls with delay
     ball.current = [];
