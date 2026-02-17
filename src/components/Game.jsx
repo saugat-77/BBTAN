@@ -12,7 +12,10 @@ export default function Game() {
 
   // State management
   const [gameStarted, setGameStarted] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [finalScore, setFinalScore] = useState(0);
   const [playerName, setPlayerName] = useState("");
+  const [nameError, setNameError] = useState(false);
   const [score, setScore] = useState(0);
   const [ballCount, setBallCount] = useState(1);
   const [highScore, setHighScore] = useState(() => {
@@ -31,6 +34,7 @@ export default function Game() {
   const returnX = useRef(null);
   const turnEnded = useRef(false);
   const mousePos = useRef({ x: width / 2, y: height / 2 });
+  const scoreRef = useRef(0);
 
 
   // Setup canvas context
@@ -337,19 +341,31 @@ export default function Game() {
   };
 
   const handleGameOver = () => {
+    const currentScore = scoreRef.current;
+
     // Update high score if needed
-    if (score > highScore.score) {
-      const newHighScore = { score, name: playerName };
+    if (currentScore > highScore.score) {
+      const newHighScore = { score: currentScore, name: playerName };
       setHighScore(newHighScore);
       localStorage.setItem("bbtan_highscore", JSON.stringify(newHighScore));
     }
 
-    // Reset game
-    setTimeout(() => {
-      if (window.confirm(`Game Over! Score: ${score}\nPlay again?`)) {
-        window.location.reload();
-      }
-    }, 100);
+    setFinalScore(currentScore);
+    setGameOver(true);
+  };
+
+  const handleRetry = () => {
+    setGameOver(false);
+    setGameStarted(false);
+    setScore(0);
+    scoreRef.current = 0;
+    setBallCount(1);
+    totalBalls.current = 1;
+    currentRowValue.current = 1;
+    ball.current = [];
+    blocks.current = [];
+    returnX.current = null;
+    turnEnded.current = false;
   };
 
   const checkBlockCollisions = (b) => {
@@ -401,7 +417,11 @@ export default function Game() {
               block.value -= 1;
               if (block.value <= 0) {
                 blocks.current[r][c] = false;
-                setScore(prev => prev + 1); // Increment score when block is destroyed
+                setScore(prev => {
+                  const newScore = prev + 1;
+                  scoreRef.current = newScore; // Keep ref in sync
+                  return newScore;
+                });
               }
             }
           
@@ -438,9 +458,10 @@ export default function Game() {
   const handleStartGame = (e) => {
     e.preventDefault();
     if (playerName.trim()) {
+      setNameError(false);
       setGameStarted(true);
     } else {
-      alert("Please enter your name!");
+      setNameError(true);
     }
   };
 
@@ -463,17 +484,34 @@ export default function Game() {
           padding: "30px",
           borderRadius: "10px",
           border: "2px solid #444",
-          minWidth: "300px"
+          minWidth: "300px",
+          maxWidth: "360px"
         }}>
           <h2 style={{ marginBottom: 20, textAlign: "center" }}>High Score</h2>
           <div style={{
             textAlign: "center",
             fontSize: "1.2em",
-            marginBottom: 30,
+            marginBottom: 20,
             color: "#FFD700"
           }}>
             <div>{highScore.score} pts</div>
             <div style={{ fontSize: "0.8em", color: "#aaa" }}>by {highScore.name}</div>
+          </div>
+
+          {/* How to play */}
+          <div style={{
+            background: "#1a1a1a",
+            borderRadius: "8px",
+            padding: "12px 16px",
+            marginBottom: 24,
+            borderLeft: "3px solid #4CAF50"
+          }}>
+            <div style={{ fontSize: "0.85em", color: "#ccc", lineHeight: 1.6 }}>
+              Aim and click to launch balls at the blocks. Break all blocks before they reach the bottom!
+            </div>
+            <div style={{ fontSize: "0.85em", color: "#ccc", lineHeight: 1.6, marginTop: 4 }}>
+              Collect gold <span style={{ color: "#FFD700", fontWeight: "bold" }}>+1</span> tiles to earn extra balls each round.
+            </div>
           </div>
 
           <form onSubmit={handleStartGame}>
@@ -484,7 +522,10 @@ export default function Game() {
               <input
                 type="text"
                 value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
+                onChange={(e) => {
+                  setPlayerName(e.target.value);
+                  if (nameError) setNameError(false);
+                }}
                 placeholder="Player name"
                 autoFocus
                 style={{
@@ -492,11 +533,17 @@ export default function Game() {
                   padding: "10px",
                   fontSize: "1em",
                   borderRadius: "5px",
-                  border: "1px solid #666",
+                  border: nameError ? "1px solid #e74c3c" : "1px solid #666",
                   background: "#333",
-                  color: "white"
+                  color: "white",
+                  boxSizing: "border-box"
                 }}
               />
+              {nameError && (
+                <div style={{ color: "#e74c3c", fontSize: "0.85em", marginTop: 6 }}>
+                  Please enter your name to start.
+                </div>
+              )}
             </div>
             <button
               type="submit"
@@ -589,6 +636,115 @@ export default function Game() {
       }}>
         Click to aim and shoot • Destroy blocks to score • Collect gold +1 balls
       </div>
+
+      {/* Game Over Modal */}
+      {gameOver && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          background: "rgba(0, 0, 0, 0.8)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: "#222",
+            border: "2px solid #444",
+            borderRadius: "12px",
+            padding: "36px 40px",
+            textAlign: "center",
+            minWidth: "300px",
+            animation: "fadeIn 0.3s ease-out"
+          }}>
+            <div style={{
+              fontSize: "2em",
+              fontWeight: "bold",
+              color: "#e74c3c",
+              marginBottom: 8
+            }}>
+              Game Over
+            </div>
+
+            <div style={{
+              width: "60px",
+              height: "3px",
+              background: "#444",
+              margin: "0 auto 20px auto",
+              borderRadius: "2px"
+            }} />
+
+            <div style={{ color: "#aaa", fontSize: "0.95em", marginBottom: 4 }}>
+              Player
+            </div>
+            <div style={{
+              color: "white",
+              fontSize: "1.3em",
+              fontWeight: "bold",
+              marginBottom: 16
+            }}>
+              {playerName}
+            </div>
+
+            <div style={{ color: "#aaa", fontSize: "0.95em", marginBottom: 4 }}>
+              Final Score
+            </div>
+            <div style={{
+              color: "#4CAF50",
+              fontSize: "2.4em",
+              fontWeight: "bold",
+              marginBottom: 8
+            }}>
+              {finalScore}
+            </div>
+
+            {finalScore >= highScore.score && finalScore > 0 && (
+              <div style={{
+                color: "#FFD700",
+                fontSize: "0.9em",
+                marginBottom: 16,
+                fontWeight: "bold"
+              }}>
+                New High Score!
+              </div>
+            )}
+
+            {finalScore < highScore.score && (
+              <div style={{
+                color: "#888",
+                fontSize: "0.85em",
+                marginBottom: 16
+              }}>
+                Best: {highScore.score} by {highScore.name}
+              </div>
+            )}
+
+            <button
+              onClick={handleRetry}
+              style={{
+                width: "100%",
+                padding: "14px",
+                fontSize: "1.1em",
+                background: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "bold",
+                marginTop: 8,
+                transition: "background 0.2s ease"
+              }}
+              onMouseEnter={(e) => e.target.style.background = "#45a049"}
+              onMouseLeave={(e) => e.target.style.background = "#4CAF50"}
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
